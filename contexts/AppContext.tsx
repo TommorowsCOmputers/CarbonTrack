@@ -20,6 +20,7 @@ import {
   calculateCarbonFootprint,
   generateRecommendations,
 } from "@/utils/carbonCalculator";
+import { navigate } from "@/navigation/NavigationRef";
 
 interface AppContextType {
   userProfile: UserProfile | null;
@@ -115,6 +116,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       const updatedProfile = { ...userProfile, hasCompletedSurvey: false };
       await saveUserProfile(updatedProfile);
       setUserProfile(updatedProfile);
+      navigate("Survey", { step: 1 });
     }
   };
 

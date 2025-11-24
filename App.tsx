@@ -9,6 +9,7 @@ import { StatusBar } from "expo-status-bar";
 import RootNavigator from "@/navigation/RootNavigator";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { AppProvider } from "@/contexts/AppContext";
+import { navigationRef } from "@/navigation/NavigationRef";
 
 export default function App() {
   return (
@@ -17,7 +18,7 @@ export default function App() {
         <GestureHandlerRootView style={styles.root}>
           <KeyboardProvider>
             <AppProvider>
-              <NavigationContainer>
+              <NavigationContainer ref={navigationRef}>
                 <RootNavigator />
               </NavigationContainer>
             </AppProvider>
