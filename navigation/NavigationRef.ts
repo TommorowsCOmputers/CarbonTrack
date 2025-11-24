@@ -6,9 +6,8 @@ import type {
 
 export const navigationRef = React.createRef<NavigationContainerRef<ParamListBase>>();
 
-export function resetAndNavigateToSurvey() {
-  navigationRef.current?.reset({
-    index: 0,
-    routes: [{ name: "Welcome" }],
-  });
+export function navigate(name: string, params?: any) {
+  if (navigationRef.current) {
+    navigationRef.current.navigate(name as never, params as never);
+  }
 }
