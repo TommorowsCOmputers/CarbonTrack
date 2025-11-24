@@ -68,7 +68,7 @@ export default function RetakeSurveyScreen() {
         devices: formData.devices || [],
       } as SurveyData;
       completeSurvey(dataWithDevices);
-      navigation.popToTop();
+      navigation.getParent()?.navigate("HomeTab" as any);
     }
   };
 
