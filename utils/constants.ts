@@ -29,5 +29,5 @@ export const OFFSET_OPTIONS = [
   },
 ];
 
-// 14 metric tons per year per person is the baseline
-export const AVERAGE_ANNUAL_TONS_PER_PERSON = 14;
+// 5 metric tons per year per person is the baseline
+export const AVERAGE_ANNUAL_TONS_PER_PERSON = 5;
