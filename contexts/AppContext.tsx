@@ -20,7 +20,6 @@ import {
   calculateCarbonFootprint,
   generateRecommendations,
 } from "@/utils/carbonCalculator";
-import { navigateToSurvey } from "@/navigation/NavigationRef";
 
 interface AppContextType {
   userProfile: UserProfile | null;

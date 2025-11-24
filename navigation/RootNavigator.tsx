@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useApp } from "@/contexts/AppContext";
+import { navigationRef } from "@/navigation/NavigationRef";
 import MainTabNavigator from "@/navigation/MainTabNavigator";
 import WelcomeScreen from "@/screens/WelcomeScreen";
 import SurveyScreen from "@/screens/SurveyScreen";
@@ -19,6 +20,17 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 export default function RootNavigator() {
   const { userProfile, isLoading } = useApp();
 
+  const hasCompletedSurvey = userProfile?.hasCompletedSurvey ?? false;
+
+  useEffect(() => {
+    if (!hasCompletedSurvey && navigationRef.current) {
+      navigationRef.current.reset({
+        index: 0,
+        routes: [{ name: "Welcome" }],
+      });
+    }
+  }, [hasCompletedSurvey]);
+
   if (isLoading) {
     return (
       <View style={styles.loading}>
@@ -26,8 +38,6 @@ export default function RootNavigator() {
       </View>
     );
   }
-
-  const hasCompletedSurvey = userProfile?.hasCompletedSurvey ?? false;
 
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
