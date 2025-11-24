@@ -11,13 +11,17 @@ export function calculateCarbonFootprint(survey: SurveyData): CarbonFootprint {
     travel: calculateTravel(survey),
   };
 
+  // Add water and recycling impact
+  let waterAndRecycling = calculateWaterAndRecycling(survey);
+
   const total =
     breakdown.heating +
     breakdown.electricity +
     breakdown.transportation +
     breakdown.food +
     breakdown.shopping +
-    breakdown.travel;
+    breakdown.travel +
+    waterAndRecycling;
 
   const daily = total / 365;
 
@@ -71,12 +75,23 @@ function calculateHeating(survey: SurveyData): number {
 }
 
 function calculateElectricity(survey: SurveyData): number {
-  const kWh =
+  let kWh =
     emissionFactors.electricity.annualUsage[survey.electricityUsage] || 10800;
 
   const adjustedKWh = kWh * (survey.occupants / 2.5);
 
-  return adjustedKWh * emissionFactors.electricity.kgCO2PerKWh;
+  // LED lights reduction (LED uses ~75% less than incandescent)
+  const ledReduction = survey.ledPercentage ? (survey.ledPercentage / 100) * 0.75 : 0;
+
+  // Renewable energy reduction
+  const renewableReduction = survey.hasRenewableEnergy ? 1.0 : 0;
+
+  // Water heating emissions (water heating is ~20% of household electricity)
+  const waterAdjustment = 1 + (survey.waterUsage === "low" ? -0.1 : survey.waterUsage === "high" ? 0.1 : 0);
+
+  const finalKWh = adjustedKWh * (1 - ledReduction - renewableReduction) * waterAdjustment;
+
+  return Math.max(0, finalKWh * emissionFactors.electricity.kgCO2PerKWh);
 }
 
 function calculateTransportation(survey: SurveyData): number {
@@ -127,6 +142,29 @@ function calculateShopping(survey: SurveyData): number {
 
 function calculateTravel(survey: SurveyData): number {
   return survey.flightsPerYear * emissionFactors.flights.kgCO2PerFlight;
+}
+
+function calculateWaterAndRecycling(survey: SurveyData): number {
+  // Water usage and treatment emissions (varies by region, average ~100 kg CO2e per person per year for high usage)
+  const waterEmissions = {
+    low: 80,
+    average: 130,
+    high: 200,
+  };
+
+  const baseWaterEmissions =
+    (waterEmissions[survey.waterUsage] || waterEmissions.average) * survey.occupants;
+
+  // Recycling reduces waste emissions
+  const recyclingReduction = {
+    minimal: 0,
+    average: baseWaterEmissions * 0.05,
+    comprehensive: baseWaterEmissions * 0.15,
+  };
+
+  const reduction = recyclingReduction[survey.recyclingHabits] || 0;
+
+  return Math.max(0, baseWaterEmissions - reduction);
 }
 
 export function generateRecommendations(

@@ -11,6 +11,10 @@ export interface SurveyData {
   occupants: number;
   heatingSource: "natural-gas" | "electric" | "oil" | "propane" | "none";
   electricityUsage: "low" | "average" | "high";
+  ledPercentage: number;
+  hasRenewableEnergy: boolean;
+  waterUsage: "low" | "average" | "high";
+  recyclingHabits: "minimal" | "average" | "comprehensive";
   vehicleCount: number;
   vehicleMiles: number;
   vehicleType: "gas" | "diesel" | "hybrid" | "electric" | "none";

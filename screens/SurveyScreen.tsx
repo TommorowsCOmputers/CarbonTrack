@@ -19,7 +19,7 @@ type SurveyScreenProps = {
   route: RouteProp<RootStackParamList, "Survey">;
 };
 
-const TOTAL_STEPS = 7;
+const TOTAL_STEPS = 11;
 
 export default function SurveyScreen({ navigation, route }: SurveyScreenProps) {
   const { theme } = useTheme();
@@ -31,6 +31,10 @@ export default function SurveyScreen({ navigation, route }: SurveyScreenProps) {
     occupants: 2,
     heatingSource: "natural-gas",
     electricityUsage: "average",
+    ledPercentage: 25,
+    hasRenewableEnergy: false,
+    waterUsage: "average",
+    recyclingHabits: "average",
     vehicleCount: 1,
     vehicleMiles: 100,
     vehicleType: "gas",
@@ -234,6 +238,89 @@ export default function SurveyScreen({ navigation, route }: SurveyScreenProps) {
         return (
           <>
             <ThemedText type="h2" style={styles.question}>
+              What percentage of your home uses LED lights?
+            </ThemedText>
+            <Spacer height={Spacing.xl} />
+            <NumberInput
+              value={formData.ledPercentage || 25}
+              onChange={(value) => updateField("ledPercentage", Math.min(value, 100))}
+              min={0}
+              max={100}
+              step={10}
+            />
+            <Spacer height={Spacing.md} />
+            <ThemedText type="small" style={[styles.hint, { color: theme.neutral }]}>
+              LED lights use about 75% less energy than incandescent bulbs
+            </ThemedText>
+          </>
+        );
+
+      case 8:
+        return (
+          <>
+            <ThemedText type="h2" style={styles.question}>
+              Do you use renewable energy?
+            </ThemedText>
+            <Spacer height={Spacing.xl} />
+            <RadioGroup
+              options={[
+                { label: "Yes (Solar, wind, or renewable plan)", value: "yes" },
+                { label: "No", value: "no" },
+              ]}
+              selected={formData.hasRenewableEnergy ? "yes" : "no"}
+              onSelect={(value) =>
+                updateField("hasRenewableEnergy", value === "yes")
+              }
+            />
+          </>
+        );
+
+      case 9:
+        return (
+          <>
+            <ThemedText type="h2" style={styles.question}>
+              How would you describe your water usage?
+            </ThemedText>
+            <Spacer height={Spacing.xl} />
+            <RadioGroup
+              options={[
+                { label: "Low (Short showers, efficient fixtures)", value: "low" },
+                { label: "Average (Regular usage)", value: "average" },
+                { label: "High (Long showers, frequent baths)", value: "high" },
+              ]}
+              selected={formData.waterUsage || "average"}
+              onSelect={(value) =>
+                updateField("waterUsage", value as SurveyData["waterUsage"])
+              }
+            />
+          </>
+        );
+
+      case 10:
+        return (
+          <>
+            <ThemedText type="h2" style={styles.question}>
+              How comprehensive are your recycling habits?
+            </ThemedText>
+            <Spacer height={Spacing.xl} />
+            <RadioGroup
+              options={[
+                { label: "Minimal (Rarely recycle)", value: "minimal" },
+                { label: "Average (Recycle some items)", value: "average" },
+                { label: "Comprehensive (Recycle most items)", value: "comprehensive" },
+              ]}
+              selected={formData.recyclingHabits || "average"}
+              onSelect={(value) =>
+                updateField("recyclingHabits", value as SurveyData["recyclingHabits"])
+              }
+            />
+          </>
+        );
+
+      case 11:
+        return (
+          <>
+            <ThemedText type="h2" style={styles.question}>
               How many round-trip flights do you take per year?
             </ThemedText>
             <Spacer height={Spacing.xl} />
@@ -291,6 +378,10 @@ const styles = StyleSheet.create({
   },
   subQuestion: {
     fontWeight: "600",
+  },
+  hint: {
+    textAlign: "center",
+    fontStyle: "italic",
   },
   buttons: {
     flexDirection: "row",
