@@ -9,7 +9,7 @@ import Spacer from "@/components/Spacer";
 import { Spacing } from "@/constants/theme";
 import { useTheme } from "@/hooks/useTheme";
 import { useApp } from "@/contexts/AppContext";
-import { US_AVERAGE_DAILY_TONS } from "@/utils/constants";
+import { AVERAGE_ANNUAL_TONS_PER_PERSON } from "@/utils/constants";
 import type { RootStackParamList } from "@/navigation/RootNavigator";
 
 type ResultsScreenProps = {
@@ -18,13 +18,15 @@ type ResultsScreenProps = {
 
 export default function ResultsScreen({ navigation }: ResultsScreenProps) {
   const { theme } = useTheme();
-  const { footprint } = useApp();
+  const { footprint, surveyData } = useApp();
 
-  if (!footprint) {
+  if (!footprint || !surveyData) {
     return null;
   }
 
-  const isAboveAverage = footprint.daily > US_AVERAGE_DAILY_TONS;
+  const occupants = surveyData.occupants || 1;
+  const averageDailyTons = (AVERAGE_ANNUAL_TONS_PER_PERSON * occupants) / 365;
+  const isAboveAverage = footprint.daily > averageDailyTons;
 
   return (
     <ScreenScrollView contentContainerStyle={styles.content}>
@@ -42,7 +44,7 @@ export default function ResultsScreen({ navigation }: ResultsScreenProps) {
 
       <Spacer height={Spacing["3xl"]} />
 
-      <CarbonDisplay dailyTons={footprint.daily} />
+      <CarbonDisplay dailyTons={footprint.daily} occupants={occupants} />
 
       <Spacer height={Spacing["3xl"]} />
 
