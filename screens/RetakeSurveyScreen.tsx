@@ -61,7 +61,7 @@ export default function RetakeSurveyScreen() {
 
   const handleNext = () => {
     if (currentStep < TOTAL_STEPS) {
-      navigation.push("RetakeSurvey", { step: currentStep + 1 });
+      navigation.navigate("RetakeSurvey", { step: currentStep + 1 });
     } else {
       const dataWithDevices = {
         ...formData,
@@ -74,7 +74,7 @@ export default function RetakeSurveyScreen() {
 
   const handleBack = () => {
     if (currentStep > 1) {
-      navigation.pop();
+      navigation.navigate("RetakeSurvey", { step: currentStep - 1 });
     }
   };
 
