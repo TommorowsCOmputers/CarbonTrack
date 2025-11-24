@@ -29,13 +29,13 @@ export function QuickActionCard({
       ]}
     >
       <Card elevation={1} style={[styles.card, { backgroundColor: theme.cardBackground }]}>
-        <View style={[styles.iconContainer, { backgroundColor: theme.primary + "20" }]}>
-          <Feather name={icon} size={24} color={theme.primary} />
+        <View style={[styles.iconContainer, { backgroundColor: theme.primary + "25" }]}>
+          <Feather name={icon} size={28} color={theme.primary} />
         </View>
-        <ThemedText type="body" style={styles.title}>
+        <ThemedText type="body" style={[styles.title, { fontWeight: "700" }]}>
           {title}
         </ThemedText>
-        <ThemedText type="small" style={[styles.impact, { color: theme.neutral }]}>
+        <ThemedText type="small" style={[styles.impact, { color: theme.secondary, fontWeight: "600" }]}>
           {impact}
         </ThemedText>
       </Card>
@@ -47,18 +47,19 @@ const styles = StyleSheet.create({
   card: {
     padding: Spacing.lg,
     minWidth: 160,
+    marginRight: Spacing.md,
   },
   iconContainer: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
+    width: 52,
+    height: 52,
+    borderRadius: 26,
     alignItems: "center",
     justifyContent: "center",
     marginBottom: Spacing.md,
   },
   title: {
-    fontWeight: "600",
     marginBottom: Spacing.xs,
+    fontSize: 16,
   },
   impact: {
     fontSize: 12,

@@ -2,7 +2,7 @@ import React from "react";
 import { View, StyleSheet } from "react-native";
 import { ThemedText } from "@/components/ThemedText";
 import { Card } from "@/components/Card";
-import { Spacing, Typography } from "@/constants/theme";
+import { Spacing, Typography, BorderRadius } from "@/constants/theme";
 import { useTheme } from "@/hooks/useTheme";
 import { US_AVERAGE_DAILY_TONS } from "@/utils/constants";
 
@@ -13,20 +13,19 @@ interface CarbonDisplayProps {
 export function CarbonDisplay({ dailyTons }: CarbonDisplayProps) {
   const { theme } = useTheme();
   const isAboveAverage = dailyTons > US_AVERAGE_DAILY_TONS;
+  const percentage = ((1 - dailyTons / US_AVERAGE_DAILY_TONS) * 100);
+  const percentageValue = isAboveAverage ? ((dailyTons / US_AVERAGE_DAILY_TONS - 1) * 100) : percentage;
 
   return (
-    <Card
-      elevation={1}
+    <View
       style={[
         styles.card,
         {
-          backgroundColor: isAboveAverage
-            ? theme.amber + "15"
-            : theme.primary + "15",
+          backgroundColor: isAboveAverage ? theme.amber : theme.primary,
         },
       ]}
     >
-      <ThemedText type="small" style={[styles.label, { color: theme.neutral }]}>
+      <ThemedText type="small" style={[styles.label, { color: "rgba(255,255,255,0.8)" }]}>
         Daily Carbon Footprint
       </ThemedText>
       <View style={styles.valueContainer}>
@@ -34,7 +33,7 @@ export function CarbonDisplay({ dailyTons }: CarbonDisplayProps) {
           style={[
             styles.value,
             {
-              color: isAboveAverage ? theme.amber : theme.primary,
+              color: "#FFFFFF",
               fontSize: Typography.display.fontSize,
               fontWeight: Typography.display.fontWeight,
             },
@@ -46,22 +45,33 @@ export function CarbonDisplay({ dailyTons }: CarbonDisplayProps) {
           type="h4"
           style={[
             styles.unit,
-            { color: isAboveAverage ? theme.amber : theme.primary },
+            { color: "#FFFFFF" },
           ]}
         >
           tons CO2e
         </ThemedText>
       </View>
-      <ThemedText
-        type="small"
-        style={[styles.comparison, { color: theme.neutral }]}
-      >
-        {isAboveAverage
-          ? `${((dailyTons / US_AVERAGE_DAILY_TONS - 1) * 100).toFixed(0)}% above`
-          : `${((1 - dailyTons / US_AVERAGE_DAILY_TONS) * 100).toFixed(0)}% below`}{" "}
-        US average
-      </ThemedText>
-    </Card>
+      <View style={styles.comparisonContainer}>
+        <View
+          style={[
+            styles.badge,
+            {
+              backgroundColor: "rgba(255,255,255,0.25)",
+            },
+          ]}
+        >
+          <ThemedText
+            type="small"
+            style={[styles.comparison, { color: "#FFFFFF" }]}
+          >
+            {isAboveAverage
+              ? `${percentageValue.toFixed(0)}% above`
+              : `${percentageValue.toFixed(0)}% below`}{" "}
+            average
+          </ThemedText>
+        </View>
+      </View>
+    </View>
   );
 }
 
@@ -69,6 +79,8 @@ const styles = StyleSheet.create({
   card: {
     padding: Spacing["3xl"],
     alignItems: "center",
+    borderRadius: BorderRadius.md,
+    marginHorizontal: Spacing.xl,
   },
   label: {
     marginBottom: Spacing.md,
@@ -76,7 +88,7 @@ const styles = StyleSheet.create({
   },
   valueContainer: {
     alignItems: "center",
-    marginBottom: Spacing.sm,
+    marginBottom: Spacing.lg,
   },
   value: {
     textAlign: "center",
@@ -85,7 +97,17 @@ const styles = StyleSheet.create({
     marginTop: Spacing.xs,
     textAlign: "center",
   },
+  comparisonContainer: {
+    width: "100%",
+    alignItems: "center",
+  },
+  badge: {
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.sm,
+    borderRadius: BorderRadius.full,
+  },
   comparison: {
     textAlign: "center",
+    fontWeight: "600",
   },
 });

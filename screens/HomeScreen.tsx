@@ -1,19 +1,28 @@
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet, ScrollView } from "react-native";
+import { View, StyleSheet, ScrollView, Alert } from "react-native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ThemedText } from "@/components/ThemedText";
 import { CarbonDisplay } from "@/components/CarbonDisplay";
 import { QuickActionCard } from "@/components/QuickActionCard";
 import { OffsetCard } from "@/components/OffsetCard";
+import { Button } from "@/components/Button";
 import { ScreenScrollView } from "@/components/ScreenScrollView";
 import Spacer from "@/components/Spacer";
-import { Spacing, Typography } from "@/constants/theme";
+import { Spacing, Typography, BorderRadius } from "@/constants/theme";
 import { useTheme } from "@/hooks/useTheme";
 import { useApp } from "@/contexts/AppContext";
 import { MOTIVATIONAL_MESSAGES, OFFSET_OPTIONS } from "@/utils/constants";
+import type { RootStackParamList } from "@/navigation/RootNavigator";
 
-export default function HomeScreen() {
+type HomeScreenNavigationProp = NativeStackNavigationProp<RootStackParamList>;
+
+interface HomeScreenProps {
+  navigation?: HomeScreenNavigationProp;
+}
+
+export default function HomeScreen({ navigation }: HomeScreenProps) {
   const { theme } = useTheme();
-  const { footprint, recommendations } = useApp();
+  const { footprint, recommendations, resetData } = useApp();
   const [messageIndex, setMessageIndex] = useState(0);
 
   useEffect(() => {
@@ -27,7 +36,24 @@ export default function HomeScreen() {
     return null;
   }
 
-  const topActions = recommendations.slice(0, 3);
+  const topActions = recommendations.slice(0, 2);
+
+  const handleRetakeSurvey = () => {
+    Alert.alert(
+      "Retake Survey",
+      "This will reset all your data and you'll need to retake the carbon footprint survey. Are you sure?",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Reset",
+          style: "destructive",
+          onPress: async () => {
+            await resetData();
+          },
+        },
+      ]
+    );
+  };
 
   return (
     <ScreenScrollView>
@@ -111,6 +137,33 @@ export default function HomeScreen() {
           <Spacer height={Spacing.lg} />
         </View>
       ))}
+
+      <Spacer height={Spacing["3xl"]} />
+
+      <ThemedText type="h3" style={styles.sectionTitle}>
+        Retake Survey
+      </ThemedText>
+      <ThemedText
+        type="small"
+        style={[styles.sectionSubtitle, { color: theme.neutral }]}
+      >
+        Update your carbon footprint calculation
+      </ThemedText>
+      <Spacer height={Spacing.lg} />
+
+      <View style={styles.retakeSurveyCard}>
+        <View style={[styles.retakeBadge, { backgroundColor: theme.secondary + "20" }]}>
+          <ThemedText type="body" style={[styles.retakeText, { color: theme.secondary, fontWeight: "600" }]}>
+            Adjust your answers to recalculate your footprint
+          </ThemedText>
+        </View>
+        <Spacer height={Spacing.lg} />
+        <Button onPress={handleRetakeSurvey} style={styles.retakeButton}>
+          Retake Survey
+        </Button>
+      </View>
+
+      <Spacer height={Spacing["3xl"]} />
     </ScreenScrollView>
   );
 }
@@ -132,5 +185,19 @@ const styles = StyleSheet.create({
   quickActions: {
     paddingHorizontal: Spacing.xl,
     gap: Spacing.md,
+  },
+  retakeSurveyCard: {
+    marginHorizontal: Spacing.xl,
+  },
+  retakeBadge: {
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.md,
+    borderRadius: BorderRadius.md,
+  },
+  retakeText: {
+    textAlign: "center",
+  },
+  retakeButton: {
+    marginHorizontal: 0,
   },
 });
