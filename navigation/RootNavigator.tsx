@@ -44,7 +44,7 @@ export default function RootNavigator() {
       {hasCompletedSurvey ? (
         <>
           <Stack.Screen name="Main" component={MainTabNavigator} />
-          <Stack.Screen name="Survey" component={SurveyScreen} options={{ animationEnabled: false }} />
+          <Stack.Screen name="Survey" component={SurveyScreen} />
           <Stack.Screen name="Results" component={ResultsScreen} />
         </>
       ) : (
