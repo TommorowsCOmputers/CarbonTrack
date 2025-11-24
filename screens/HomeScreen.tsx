@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { View, StyleSheet, ScrollView, Alert } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ThemedText } from "@/components/ThemedText";
 import { CarbonDisplay } from "@/components/CarbonDisplay";
@@ -16,11 +17,8 @@ import type { RootStackParamList } from "@/navigation/RootNavigator";
 
 type HomeScreenNavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
-interface HomeScreenProps {
-  navigation?: HomeScreenNavigationProp;
-}
-
-export default function HomeScreen({ navigation }: HomeScreenProps) {
+export default function HomeScreen() {
+  const navigation = useNavigation<HomeScreenNavigationProp>();
   const { theme } = useTheme();
   const { footprint, recommendations, resetSurvey, surveyData } = useApp();
   const [messageIndex, setMessageIndex] = useState(0);
@@ -49,7 +47,6 @@ export default function HomeScreen({ navigation }: HomeScreenProps) {
           style: "destructive",
           onPress: async () => {
             await resetSurvey();
-            navigation?.navigate("Survey", { step: 1 });
           },
         },
       ]
