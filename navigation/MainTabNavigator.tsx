@@ -7,14 +7,27 @@ import HomeStackNavigator from "@/navigation/HomeStackNavigator";
 import BreakdownStackNavigator from "@/navigation/BreakdownStackNavigator";
 import ActionsStackNavigator from "@/navigation/ActionsStackNavigator";
 import ProfileStackNavigator from "@/navigation/ProfileStackNavigator";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import DevicesScreen from "@/screens/DevicesScreen";
 import { useTheme } from "@/hooks/useTheme";
 
 export type MainTabParamList = {
   HomeTab: undefined;
   BreakdownTab: undefined;
   ActionsTab: undefined;
+  DevicesTab: undefined;
   ProfileTab: undefined;
 };
+
+const DevicesStack = createNativeStackNavigator();
+
+function DevicesStackNavigator() {
+  return (
+    <DevicesStack.Navigator screenOptions={{ headerShown: false }}>
+      <DevicesStack.Screen name="DevicesScreen" component={DevicesScreen} />
+    </DevicesStack.Navigator>
+  );
+}
 
 const Tab = createBottomTabNavigator<MainTabParamList>();
 
@@ -74,6 +87,16 @@ export default function MainTabNavigator() {
           title: "Actions",
           tabBarIcon: ({ color, size }) => (
             <Feather name="trending-down" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="DevicesTab"
+        component={DevicesStackNavigator}
+        options={{
+          title: "Devices",
+          tabBarIcon: ({ color, size }) => (
+            <Feather name="zap" size={size} color={color} />
           ),
         }}
       />

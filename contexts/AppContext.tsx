@@ -100,7 +100,13 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     await saveSurveyData(data);
     setSurveyData(data);
 
-    const calculatedFootprint = calculateCarbonFootprint(data, completedActions, activeDevices);
+    // Save devices if provided in survey
+    if (data.devices && data.devices.length > 0) {
+      await saveActiveDevices(data.devices);
+      setActiveDevices(data.devices);
+    }
+
+    const calculatedFootprint = calculateCarbonFootprint(data, completedActions, data.devices || []);
     setFootprint(calculatedFootprint);
 
     if (userProfile) {
@@ -164,6 +170,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       setSurveyData(null);
       setFootprint(null);
       setCompletedActions([]);
+      setActiveDevices([]);
+      setGoals([]);
     }
   };
 
