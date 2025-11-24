@@ -13,8 +13,9 @@ interface CarbonDisplayProps {
 export function CarbonDisplay({ dailyTons }: CarbonDisplayProps) {
   const { theme } = useTheme();
   const isAboveAverage = dailyTons > US_AVERAGE_DAILY_TONS;
-  const percentage = ((1 - dailyTons / US_AVERAGE_DAILY_TONS) * 100);
-  const percentageValue = isAboveAverage ? ((dailyTons / US_AVERAGE_DAILY_TONS - 1) * 100) : percentage;
+  
+  // Calculate percentage difference from average
+  const percentageDifference = Math.abs((dailyTons - US_AVERAGE_DAILY_TONS) / US_AVERAGE_DAILY_TONS) * 100;
 
   return (
     <View
@@ -65,8 +66,8 @@ export function CarbonDisplay({ dailyTons }: CarbonDisplayProps) {
             style={[styles.comparison, { color: "#FFFFFF" }]}
           >
             {isAboveAverage
-              ? `${percentageValue.toFixed(0)}% above`
-              : `${percentageValue.toFixed(0)}% below`}{" "}
+              ? `${percentageDifference.toFixed(0)}% above`
+              : `${percentageDifference.toFixed(0)}% below`}{" "}
             average
           </ThemedText>
         </View>

@@ -49,10 +49,6 @@ export default function HomeScreen({ navigation }: HomeScreenProps) {
           style: "destructive",
           onPress: async () => {
             await resetData();
-            navigation?.reset({
-              index: 0,
-              routes: [{ name: "Welcome" }],
-            });
           },
         },
       ]
