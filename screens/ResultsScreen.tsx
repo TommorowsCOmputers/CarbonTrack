@@ -72,7 +72,7 @@ export default function ResultsScreen({ navigation }: ResultsScreenProps) {
             { color: isAboveAverage ? theme.amber : theme.primary },
           ]}
         >
-          {(footprint.total / 1000).toFixed(2)}
+          {footprint.total.toFixed(2)}
         </ThemedText>
         <ThemedText type="h4" style={{ color: theme.neutral }}>
           metric tons CO2e per year

@@ -14,7 +14,7 @@ export function calculateCarbonFootprint(survey: SurveyData): CarbonFootprint {
   // Add water and recycling impact
   let waterAndRecycling = calculateWaterAndRecycling(survey);
 
-  const total =
+  const totalKg =
     breakdown.heating +
     breakdown.electricity +
     breakdown.transportation +
@@ -23,12 +23,21 @@ export function calculateCarbonFootprint(survey: SurveyData): CarbonFootprint {
     breakdown.travel +
     waterAndRecycling;
 
+  // Convert from kg to metric tons
+  const total = totalKg / 1000;
   const daily = total / 365;
 
   return {
     total,
     daily,
-    breakdown,
+    breakdown: {
+      heating: breakdown.heating / 1000,
+      electricity: breakdown.electricity / 1000,
+      transportation: breakdown.transportation / 1000,
+      food: breakdown.food / 1000,
+      shopping: breakdown.shopping / 1000,
+      travel: breakdown.travel / 1000,
+    },
   };
 }
 
