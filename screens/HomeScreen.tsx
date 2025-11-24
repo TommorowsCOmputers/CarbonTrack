@@ -49,6 +49,7 @@ export default function HomeScreen({ navigation }: HomeScreenProps) {
           style: "destructive",
           onPress: async () => {
             await resetSurvey();
+            navigation?.navigate("Survey", { step: 1 });
           },
         },
       ]
