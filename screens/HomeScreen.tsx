@@ -58,7 +58,7 @@ export default function HomeScreen({ navigation }: HomeScreenProps) {
 
   return (
     <ScreenScrollView>
-      <CarbonDisplay dailyTons={footprint.daily} occupants={surveyData?.occupants || 1} />
+      <CarbonDisplay annualTons={footprint.total} occupants={surveyData?.occupants || 1} />
 
       <Spacer height={Spacing["2xl"]} />
 

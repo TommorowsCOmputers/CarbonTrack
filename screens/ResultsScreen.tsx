@@ -25,8 +25,8 @@ export default function ResultsScreen({ navigation }: ResultsScreenProps) {
   }
 
   const occupants = surveyData.occupants || 1;
-  const averageDailyTons = (AVERAGE_ANNUAL_TONS_PER_PERSON * occupants) / 365;
-  const isAboveAverage = footprint.daily > averageDailyTons;
+  const averageAnnualTons = AVERAGE_ANNUAL_TONS_PER_PERSON * occupants;
+  const isAboveAverage = footprint.total > averageAnnualTons;
 
   return (
     <ScreenScrollView contentContainerStyle={styles.content}>
@@ -44,7 +44,7 @@ export default function ResultsScreen({ navigation }: ResultsScreenProps) {
 
       <Spacer height={Spacing["3xl"]} />
 
-      <CarbonDisplay dailyTons={footprint.daily} occupants={occupants} />
+      <CarbonDisplay annualTons={footprint.total} occupants={occupants} />
 
       <Spacer height={Spacing["3xl"]} />
 

@@ -7,21 +7,21 @@ import { useTheme } from "@/hooks/useTheme";
 import { AVERAGE_ANNUAL_TONS_PER_PERSON } from "@/utils/constants";
 
 interface CarbonDisplayProps {
-  dailyTons: number;
+  annualTons: number;
   occupants: number;
 }
 
-export function CarbonDisplay({ dailyTons, occupants }: CarbonDisplayProps) {
+export function CarbonDisplay({ annualTons, occupants }: CarbonDisplayProps) {
   const { theme } = useTheme();
   
-  // Calculate average daily tons based on household size
-  // 12 metric tons per year per person, multiplied by household size, then divided by 365
-  const averageDailyTons = (AVERAGE_ANNUAL_TONS_PER_PERSON * occupants) / 365;
+  // Calculate average annual tons based on household size
+  // 12 metric tons per year per person, multiplied by household size
+  const averageAnnualTons = AVERAGE_ANNUAL_TONS_PER_PERSON * occupants;
   
-  const isAboveAverage = dailyTons > averageDailyTons;
+  const isAboveAverage = annualTons > averageAnnualTons;
   
   // Calculate percentage difference from average
-  const percentageDifference = Math.abs((dailyTons - averageDailyTons) / averageDailyTons) * 100;
+  const percentageDifference = Math.abs((annualTons - averageAnnualTons) / averageAnnualTons) * 100;
 
   return (
     <View
@@ -33,7 +33,7 @@ export function CarbonDisplay({ dailyTons, occupants }: CarbonDisplayProps) {
       ]}
     >
       <ThemedText type="small" style={[styles.label, { color: "rgba(255,255,255,0.8)" }]}>
-        Daily Carbon Footprint
+        Annual Carbon Footprint
       </ThemedText>
       <View style={styles.valueContainer}>
         <ThemedText
@@ -46,7 +46,7 @@ export function CarbonDisplay({ dailyTons, occupants }: CarbonDisplayProps) {
             },
           ]}
         >
-          {dailyTons.toFixed(3)}
+          {annualTons.toFixed(2)}
         </ThemedText>
         <ThemedText
           type="h4"
