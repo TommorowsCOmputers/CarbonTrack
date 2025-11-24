@@ -5,6 +5,8 @@ const KEYS = {
   USER_PROFILE: "@carbon_tracker:user_profile",
   SURVEY_DATA: "@carbon_tracker:survey_data",
   COMPLETED_ACTIONS: "@carbon_tracker:completed_actions",
+  ACTIVE_DEVICES: "@carbon_tracker:active_devices",
+  GOALS: "@carbon_tracker:goals",
 };
 
 export async function saveUserProfile(profile: UserProfile): Promise<void> {
@@ -99,12 +101,52 @@ export async function clearSurveyData(): Promise<void> {
   }
 }
 
+export async function saveActiveDevices(devices: any[]): Promise<void> {
+  try {
+    await AsyncStorage.setItem(KEYS.ACTIVE_DEVICES, JSON.stringify(devices));
+  } catch (error) {
+    console.error("Error saving active devices:", error);
+    throw error;
+  }
+}
+
+export async function getActiveDevices(): Promise<any[]> {
+  try {
+    const data = await AsyncStorage.getItem(KEYS.ACTIVE_DEVICES);
+    return data ? JSON.parse(data) : [];
+  } catch (error) {
+    console.error("Error loading active devices:", error);
+    return [];
+  }
+}
+
+export async function saveGoals(goals: any[]): Promise<void> {
+  try {
+    await AsyncStorage.setItem(KEYS.GOALS, JSON.stringify(goals));
+  } catch (error) {
+    console.error("Error saving goals:", error);
+    throw error;
+  }
+}
+
+export async function getGoals(): Promise<any[]> {
+  try {
+    const data = await AsyncStorage.getItem(KEYS.GOALS);
+    return data ? JSON.parse(data) : [];
+  } catch (error) {
+    console.error("Error loading goals:", error);
+    return [];
+  }
+}
+
 export async function clearAllData(): Promise<void> {
   try {
     await AsyncStorage.multiRemove([
       KEYS.USER_PROFILE,
       KEYS.SURVEY_DATA,
       KEYS.COMPLETED_ACTIONS,
+      KEYS.ACTIVE_DEVICES,
+      KEYS.GOALS,
     ]);
   } catch (error) {
     console.error("Error clearing all data:", error);

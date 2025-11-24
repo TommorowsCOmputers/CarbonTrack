@@ -1,7 +1,7 @@
 import { SurveyData, CarbonFootprint } from "./types";
 import { emissionFactors } from "./emissionFactors";
 
-export function calculateCarbonFootprint(survey: SurveyData): CarbonFootprint {
+export function calculateCarbonFootprint(survey: SurveyData, completedActions: string[] = [], activeDevices: any[] = []): CarbonFootprint {
   const breakdown = {
     heating: calculateHeating(survey),
     electricity: calculateElectricity(survey),
@@ -24,19 +24,34 @@ export function calculateCarbonFootprint(survey: SurveyData): CarbonFootprint {
     waterAndRecycling;
 
   // Convert from kg to metric tons
-  const total = totalKg / 1000;
+  let totalKgAdjusted = totalKg;
+
+  // Apply reduction from completed actions (average 10% reduction per action, up to 40% max)
+  const actionReduction = Math.min(completedActions.length * 0.1, 0.4);
+  totalKgAdjusted *= (1 - actionReduction);
+
+  // Add emissions from active devices
+  let deviceEmissions = 0;
+  activeDevices.forEach((device) => {
+    if (device.isOn) {
+      deviceEmissions += device.kgCO2ePerDay * 365;
+    }
+  });
+  totalKgAdjusted += deviceEmissions;
+
+  const total = totalKgAdjusted / 1000;
   const daily = total / 365;
 
   return {
     total,
     daily,
     breakdown: {
-      heating: breakdown.heating / 1000,
-      electricity: breakdown.electricity / 1000,
-      transportation: breakdown.transportation / 1000,
-      food: breakdown.food / 1000,
-      shopping: breakdown.shopping / 1000,
-      travel: breakdown.travel / 1000,
+      heating: (breakdown.heating / 1000) * (1 - actionReduction),
+      electricity: (breakdown.electricity / 1000) * (1 - actionReduction),
+      transportation: (breakdown.transportation / 1000) * (1 - actionReduction),
+      food: (breakdown.food / 1000) * (1 - actionReduction),
+      shopping: (breakdown.shopping / 1000) * (1 - actionReduction),
+      travel: (breakdown.travel / 1000) * (1 - actionReduction),
     },
   };
 }

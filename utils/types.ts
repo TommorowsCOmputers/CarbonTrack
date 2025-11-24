@@ -6,6 +6,14 @@ export interface UserProfile {
   hasCompletedSurvey: boolean;
 }
 
+export interface Device {
+  id: string;
+  name: string;
+  hoursPerDay: number;
+  kgCO2ePerDay: number;
+  isOn: boolean;
+}
+
 export interface SurveyData {
   homeSize: "small" | "medium" | "large" | "very-large";
   occupants: number;
@@ -21,6 +29,15 @@ export interface SurveyData {
   dietType: "meat-heavy" | "average" | "vegetarian" | "vegan";
   shoppingHabits: "minimal" | "average" | "frequent";
   flightsPerYear: number;
+  devices?: Device[];
+}
+
+export interface Goal {
+  id: string;
+  title: string;
+  targetReduction: number;
+  currentReduction: number;
+  completed: boolean;
 }
 
 export interface CarbonFootprint {
