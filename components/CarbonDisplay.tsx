@@ -15,7 +15,7 @@ export function CarbonDisplay({ annualTons, occupants }: CarbonDisplayProps) {
   const { theme } = useTheme();
   
   // Calculate average annual tons based on household size
-  // 12 metric tons per year per person, multiplied by household size
+  // 14 metric tons per year per person, multiplied by household size
   const averageAnnualTons = AVERAGE_ANNUAL_TONS_PER_PERSON * occupants;
   
   const isAboveAverage = annualTons > averageAnnualTons;
