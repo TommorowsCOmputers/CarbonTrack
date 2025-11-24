@@ -20,7 +20,7 @@ import {
   calculateCarbonFootprint,
   generateRecommendations,
 } from "@/utils/carbonCalculator";
-import { navigate } from "@/navigation/NavigationRef";
+import { navigateToSurvey } from "@/navigation/NavigationRef";
 
 interface AppContextType {
   userProfile: UserProfile | null;
@@ -116,10 +116,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       const updatedProfile = { ...userProfile, hasCompletedSurvey: false };
       await saveUserProfile(updatedProfile);
       setUserProfile(updatedProfile);
+      navigateToSurvey();
     }
-    setTimeout(() => {
-      navigate("Survey", { step: 1 });
-    }, 100);
   };
 
   const resetData = async () => {
