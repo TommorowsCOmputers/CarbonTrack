@@ -4,11 +4,15 @@ import { Feather } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import { Platform, StyleSheet } from "react-native";
 import HomeStackNavigator from "@/navigation/HomeStackNavigator";
+import BreakdownStackNavigator from "@/navigation/BreakdownStackNavigator";
+import ActionsStackNavigator from "@/navigation/ActionsStackNavigator";
 import ProfileStackNavigator from "@/navigation/ProfileStackNavigator";
 import { useTheme } from "@/hooks/useTheme";
 
 export type MainTabParamList = {
   HomeTab: undefined;
+  BreakdownTab: undefined;
+  ActionsTab: undefined;
   ProfileTab: undefined;
 };
 
@@ -50,6 +54,26 @@ export default function MainTabNavigator() {
           title: "Home",
           tabBarIcon: ({ color, size }) => (
             <Feather name="home" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="BreakdownTab"
+        component={BreakdownStackNavigator}
+        options={{
+          title: "Breakdown",
+          tabBarIcon: ({ color, size }) => (
+            <Feather name="pie-chart" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="ActionsTab"
+        component={ActionsStackNavigator}
+        options={{
+          title: "Actions",
+          tabBarIcon: ({ color, size }) => (
+            <Feather name="trending-down" size={size} color={color} />
           ),
         }}
       />

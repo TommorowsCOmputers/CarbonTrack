@@ -1,26 +1,25 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-
-import ProfileScreen from "@/screens/ProfileScreen";
-import { useTheme } from "@/hooks/useTheme";
+import ActionsScreen from "@/screens/ActionsScreen";
 import { getCommonScreenOptions } from "@/navigation/screenOptions";
+import { useTheme } from "@/hooks/useTheme";
 
-export type ProfileStackParamList = {
-  Profile: undefined;
+export type ActionsStackParamList = {
+  Actions: undefined;
 };
 
-const Stack = createNativeStackNavigator<ProfileStackParamList>();
+const Stack = createNativeStackNavigator<ActionsStackParamList>();
 
-export default function ProfileStackNavigator() {
+export default function ActionsStackNavigator() {
   const { theme, isDark } = useTheme();
 
   return (
     <Stack.Navigator screenOptions={getCommonScreenOptions({ theme, isDark })}>
       <Stack.Screen
-        name="Profile"
-        component={ProfileScreen}
+        name="Actions"
+        component={ActionsScreen}
         options={{
-          title: "Profile",
+          headerTitle: "Reduce & Offset",
         }}
       />
     </Stack.Navigator>

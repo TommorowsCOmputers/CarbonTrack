@@ -1,194 +1,131 @@
-import { useState } from "react";
-import { StyleSheet, View, TextInput } from "react-native";
-import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-
-import { ScreenKeyboardAwareScrollView } from "@/components/ScreenKeyboardAwareScrollView";
+import React from "react";
+import { StyleSheet, View, Image, Alert } from "react-native";
 import { ThemedText } from "@/components/ThemedText";
 import { Button } from "@/components/Button";
-import { useTheme } from "@/hooks/useTheme";
-import { Spacing, BorderRadius, Typography } from "@/constants/theme";
+import { Card } from "@/components/Card";
+import { ScreenScrollView } from "@/components/ScreenScrollView";
 import Spacer from "@/components/Spacer";
-import type { ProfileStackParamList } from "@/navigation/ProfileStackNavigator";
+import { Spacing, BorderRadius } from "@/constants/theme";
+import { useTheme } from "@/hooks/useTheme";
+import { useApp } from "@/contexts/AppContext";
 
-type ProfileScreenProps = {
-  navigation: NativeStackNavigationProp<ProfileStackParamList, "Profile">;
+const AVATARS = {
+  leaf: require("@/assets/avatars/leaf.png"),
+  tree: require("@/assets/avatars/tree.png"),
+  earth: require("@/assets/avatars/earth.png"),
 };
 
-export default function ProfileScreen({ navigation }: ProfileScreenProps) {
-  const { theme, isDark } = useTheme();
+export default function ProfileScreen() {
+  const { theme } = useTheme();
+  const { userProfile, resetData } = useApp();
 
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-
-  const handleSubmit = () => {
-    console.log("Form submitted:", { name, email, password });
+  const handleReset = () => {
+    Alert.alert(
+      "Retake Survey",
+      "This will reset all your data and you'll need to retake the carbon footprint survey. Are you sure?",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Reset",
+          style: "destructive",
+          onPress: async () => {
+            await resetData();
+          },
+        },
+      ]
+    );
   };
 
-  const inputStyle = [
-    styles.input,
-    {
-      backgroundColor: theme.backgroundDefault,
-      color: theme.text,
-    },
-  ];
+  if (!userProfile) {
+    return null;
+  }
 
   return (
-    <ScreenKeyboardAwareScrollView>
-      <View style={styles.section}>
-        <ThemedText type="h1">Heading 1</ThemedText>
-        <ThemedText type="small" style={styles.meta}>
-          32px • Bold
-        </ThemedText>
+    <ScreenScrollView>
+      <View style={styles.header}>
+        <View style={[styles.avatarContainer, { backgroundColor: theme.backgroundDefault }]}>
+          <Image
+            source={AVATARS[userProfile.avatar]}
+            style={styles.avatar}
+          />
+        </View>
+        <Spacer height={Spacing.lg} />
+        <ThemedText type="h2">{userProfile.name}</ThemedText>
       </View>
 
-      <View style={styles.section}>
-        <ThemedText type="h2">Heading 2</ThemedText>
-        <ThemedText type="small" style={styles.meta}>
-          28px • Bold
+      <Spacer height={Spacing["3xl"]} />
+
+      <ThemedText type="h3" style={styles.sectionTitle}>
+        Survey
+      </ThemedText>
+      <Spacer height={Spacing.md} />
+      <Card elevation={1} style={styles.card}>
+        <ThemedText type="body" style={styles.cardTitle}>
+          Carbon Footprint Survey
         </ThemedText>
-      </View>
-
-      <View style={styles.section}>
-        <ThemedText type="h3">Heading 3</ThemedText>
-        <ThemedText type="small" style={styles.meta}>
-          24px • Semi-Bold
+        <ThemedText type="small" style={[styles.cardDescription, { color: theme.neutral }]}>
+          Retake the survey to update your carbon footprint calculation
         </ThemedText>
-      </View>
-
-      <View style={styles.section}>
-        <ThemedText type="h4">Heading 4</ThemedText>
-        <ThemedText type="small" style={styles.meta}>
-          20px • Semi-Bold
-        </ThemedText>
-      </View>
-
-      <View style={styles.section}>
-        <ThemedText type="body">
-          Body text - This is the default text style for paragraphs and general
-          content.
-        </ThemedText>
-        <ThemedText type="small" style={styles.meta}>
-          16px • Regular
-        </ThemedText>
-      </View>
-
-      <View style={styles.section}>
-        <ThemedText type="small">
-          Small text - Used for captions, labels, and secondary information.
-        </ThemedText>
-        <ThemedText type="small" style={styles.meta}>
-          14px • Regular
-        </ThemedText>
-      </View>
-
-      <View style={styles.section}>
-        <ThemedText type="link">Link text - Interactive elements</ThemedText>
-        <ThemedText type="small" style={styles.meta}>
-          16px • Regular • Colored
-        </ThemedText>
-      </View>
-
-      <Spacer height={Spacing["4xl"]} />
-
-      <View style={styles.fieldContainer}>
-        <ThemedText type="small" style={styles.label}>
-          Name
-        </ThemedText>
-        <TextInput
-          style={inputStyle}
-          value={name}
-          onChangeText={setName}
-          placeholder="Enter your name"
-          placeholderTextColor={isDark ? "#9BA1A6" : "#687076"}
-          autoCapitalize="words"
-          returnKeyType="next"
-        />
-      </View>
-
-      <Spacer height={Spacing.lg} />
-
-      <View style={styles.fieldContainer}>
-        <ThemedText type="small" style={styles.label}>
-          Email
-        </ThemedText>
-        <TextInput
-          style={inputStyle}
-          value={email}
-          onChangeText={setEmail}
-          placeholder="your.email@example.com"
-          placeholderTextColor={isDark ? "#9BA1A6" : "#687076"}
-          keyboardType="email-address"
-          autoCapitalize="none"
-          returnKeyType="next"
-        />
-      </View>
-
-      <Spacer height={Spacing.lg} />
-
-      <View style={styles.fieldContainer}>
-        <ThemedText type="small" style={styles.label}>
-          Password
-        </ThemedText>
-        <TextInput
-          style={inputStyle}
-          value={password}
-          onChangeText={setPassword}
-          placeholder="Enter a password"
-          placeholderTextColor={isDark ? "#9BA1A6" : "#687076"}
-          secureTextEntry
-          autoCapitalize="none"
-          returnKeyType="next"
-        />
-      </View>
-
-      <Spacer height={Spacing.lg} />
-
-      <Button onPress={handleSubmit}>Submit Form</Button>
+        <Spacer height={Spacing.lg} />
+        <Button onPress={handleReset} style={styles.resetButton}>
+          Retake Survey
+        </Button>
+      </Card>
 
       <Spacer height={Spacing["2xl"]} />
 
       <ThemedText type="h3" style={styles.sectionTitle}>
-        Testing
+        About
       </ThemedText>
       <Spacer height={Spacing.md} />
-      <Button
-        onPress={() => navigation.navigate("Crash")}
-        style={styles.crashButton}
-      >
-        Crash App
-      </Button>
-    </ScreenKeyboardAwareScrollView>
+      <Card elevation={1} style={styles.card}>
+        <ThemedText type="body" style={styles.cardTitle}>
+          Carbon Tracker
+        </ThemedText>
+        <Spacer height={Spacing.sm} />
+        <ThemedText type="small" style={[styles.cardDescription, { color: theme.neutral }]}>
+          Version 1.0.0
+        </ThemedText>
+        <Spacer height={Spacing.md} />
+        <ThemedText type="small" style={[styles.cardDescription, { color: theme.neutral }]}>
+          Emission factors based on EPA Greenhouse Gas Inventory data (2025)
+        </ThemedText>
+      </Card>
+
+      <Spacer height={Spacing["2xl"]} />
+    </ScreenScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  section: {
-    marginBottom: Spacing["3xl"],
+  header: {
+    alignItems: "center",
+    paddingTop: Spacing.xl,
   },
-  meta: {
-    opacity: 0.5,
-    marginTop: Spacing.sm,
+  avatarContainer: {
+    width: 100,
+    height: 100,
+    borderRadius: BorderRadius.full,
+    padding: Spacing.md,
   },
-  fieldContainer: {
+  avatar: {
     width: "100%",
-  },
-  label: {
-    marginBottom: Spacing.sm,
-    fontWeight: "600",
-    opacity: 0.8,
-  },
-  input: {
-    height: Spacing.inputHeight,
-    borderWidth: 0,
-    borderRadius: BorderRadius.md,
-    paddingHorizontal: Spacing.lg,
-    fontSize: Typography.body.fontSize,
+    height: "100%",
+    resizeMode: "contain",
   },
   sectionTitle: {
-    marginTop: Spacing.xl,
+    paddingHorizontal: Spacing.xl,
   },
-  crashButton: {
-    backgroundColor: "#FF3B30",
+  card: {
+    padding: Spacing.lg,
+  },
+  cardTitle: {
+    fontWeight: "600",
+  },
+  cardDescription: {
+    marginTop: Spacing.xs,
+  },
+  resetButton: {
+    backgroundColor: "#F5A623",
   },
 });

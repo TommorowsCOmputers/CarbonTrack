@@ -1,7 +1,8 @@
+import React from "react";
 import { ScrollView, ScrollViewProps, StyleSheet } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { useTheme } from "@/hooks/useTheme";
-import { useScreenInsets } from "@/hooks/useScreenInsets";
 import { Spacing } from "@/constants/theme";
 
 export function ScreenScrollView({
@@ -11,7 +12,7 @@ export function ScreenScrollView({
   ...scrollViewProps
 }: ScrollViewProps) {
   const { theme } = useTheme();
-  const { paddingTop, paddingBottom, scrollInsetBottom } = useScreenInsets();
+  const insets = useSafeAreaInsets();
 
   return (
     <ScrollView
@@ -22,13 +23,13 @@ export function ScreenScrollView({
       ]}
       contentContainerStyle={[
         {
-          paddingTop,
-          paddingBottom,
+          paddingTop: insets.top + Spacing.xl,
+          paddingBottom: insets.bottom + Spacing.xl,
         },
         styles.contentContainer,
         contentContainerStyle,
       ]}
-      scrollIndicatorInsets={{ bottom: scrollInsetBottom }}
+      scrollIndicatorInsets={{ bottom: insets.bottom }}
       {...scrollViewProps}
     >
       {children}

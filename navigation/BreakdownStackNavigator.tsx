@@ -1,26 +1,25 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-
-import ProfileScreen from "@/screens/ProfileScreen";
-import { useTheme } from "@/hooks/useTheme";
+import BreakdownScreen from "@/screens/BreakdownScreen";
 import { getCommonScreenOptions } from "@/navigation/screenOptions";
+import { useTheme } from "@/hooks/useTheme";
 
-export type ProfileStackParamList = {
-  Profile: undefined;
+export type BreakdownStackParamList = {
+  Breakdown: undefined;
 };
 
-const Stack = createNativeStackNavigator<ProfileStackParamList>();
+const Stack = createNativeStackNavigator<BreakdownStackParamList>();
 
-export default function ProfileStackNavigator() {
+export default function BreakdownStackNavigator() {
   const { theme, isDark } = useTheme();
 
   return (
     <Stack.Navigator screenOptions={getCommonScreenOptions({ theme, isDark })}>
       <Stack.Screen
-        name="Profile"
-        component={ProfileScreen}
+        name="Breakdown"
+        component={BreakdownScreen}
         options={{
-          title: "Profile",
+          headerTitle: "My Carbon Footprint",
         }}
       />
     </Stack.Navigator>

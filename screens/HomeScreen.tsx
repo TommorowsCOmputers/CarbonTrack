@@ -1,52 +1,136 @@
-import React from "react";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { Card } from "@/components/Card";
-import { ScreenFlatList } from "@/components/ScreenFlatList";
+import React, { useState, useEffect } from "react";
+import { View, StyleSheet, ScrollView } from "react-native";
+import { ThemedText } from "@/components/ThemedText";
+import { CarbonDisplay } from "@/components/CarbonDisplay";
+import { QuickActionCard } from "@/components/QuickActionCard";
+import { OffsetCard } from "@/components/OffsetCard";
+import { ScreenScrollView } from "@/components/ScreenScrollView";
 import Spacer from "@/components/Spacer";
-import { Spacing } from "@/constants/theme";
+import { Spacing, Typography } from "@/constants/theme";
+import { useTheme } from "@/hooks/useTheme";
+import { useApp } from "@/contexts/AppContext";
+import { MOTIVATIONAL_MESSAGES, OFFSET_OPTIONS } from "@/utils/constants";
 
-type HomeStackParamList = {
-  Home: undefined;
-  Detail: undefined;
-};
+export default function HomeScreen() {
+  const { theme } = useTheme();
+  const { footprint, recommendations } = useApp();
+  const [messageIndex, setMessageIndex] = useState(0);
 
-type HomeScreenProps = {
-  navigation: NativeStackNavigationProp<HomeStackParamList, "Home">;
-};
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setMessageIndex((prev) => (prev + 1) % MOTIVATIONAL_MESSAGES.length);
+    }, 10000);
+    return () => clearInterval(interval);
+  }, []);
 
-interface CardData {
-  id: string;
-  elevation: number;
-}
+  if (!footprint) {
+    return null;
+  }
 
-const CARD_DATA: CardData[] = [
-  { id: "1", elevation: 1 },
-  { id: "2", elevation: 2 },
-  { id: "3", elevation: 3 },
-  { id: "4", elevation: 1 },
-  { id: "5", elevation: 2 },
-  { id: "6", elevation: 3 },
-  { id: "7", elevation: 1 },
-  { id: "8", elevation: 2 },
-  { id: "9", elevation: 3 },
-];
-
-export default function HomeScreen({ navigation }: HomeScreenProps) {
-  const renderItem = ({ item }: { item: CardData }) => (
-    <>
-      <Card
-        elevation={item.elevation}
-        onPress={() => navigation.navigate("Detail")}
-      />
-      <Spacer height={Spacing.lg} />
-    </>
-  );
+  const topActions = recommendations.slice(0, 3);
 
   return (
-    <ScreenFlatList
-      data={CARD_DATA}
-      renderItem={renderItem}
-      keyExtractor={(item) => item.id}
-    />
+    <ScreenScrollView>
+      <CarbonDisplay dailyTons={footprint.daily} />
+
+      <Spacer height={Spacing["2xl"]} />
+
+      <View style={styles.motivationalContainer}>
+        <ThemedText
+          style={[
+            styles.motivational,
+            {
+              fontSize: Typography.motivational.fontSize,
+              fontWeight: Typography.motivational.fontWeight,
+              color: theme.primary,
+            },
+          ]}
+        >
+          {MOTIVATIONAL_MESSAGES[messageIndex]}
+        </ThemedText>
+      </View>
+
+      <Spacer height={Spacing["3xl"]} />
+
+      <ThemedText type="h3" style={styles.sectionTitle}>
+        Quick Actions
+      </ThemedText>
+      <ThemedText
+        type="small"
+        style={[styles.sectionSubtitle, { color: theme.neutral }]}
+      >
+        Simple changes you can make today
+      </ThemedText>
+      <Spacer height={Spacing.lg} />
+
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.quickActions}
+      >
+        {topActions.map((action) => (
+          <QuickActionCard
+            key={action.id}
+            icon={
+              action.category === "heating"
+                ? "home"
+                : action.category === "electricity"
+                  ? "zap"
+                  : action.category === "transportation"
+                    ? "navigation"
+                    : action.category === "food"
+                      ? "shopping-cart"
+                      : "shopping-bag"
+            }
+            title={action.title}
+            impact={`-${action.estimatedReduction.toFixed(0)} kg CO2/year`}
+          />
+        ))}
+      </ScrollView>
+
+      <Spacer height={Spacing["3xl"]} />
+
+      <ThemedText type="h3" style={styles.sectionTitle}>
+        Offset Your Footprint
+      </ThemedText>
+      <ThemedText
+        type="small"
+        style={[styles.sectionSubtitle, { color: theme.neutral }]}
+      >
+        Support environmental projects
+      </ThemedText>
+      <Spacer height={Spacing.lg} />
+
+      {OFFSET_OPTIONS.map((option, index) => (
+        <View key={index}>
+          <OffsetCard
+            title={option.title}
+            description={option.description}
+            impact={option.impact}
+          />
+          <Spacer height={Spacing.lg} />
+        </View>
+      ))}
+    </ScreenScrollView>
   );
 }
+
+const styles = StyleSheet.create({
+  motivationalContainer: {
+    paddingHorizontal: Spacing.lg,
+  },
+  motivational: {
+    textAlign: "center",
+  },
+  sectionTitle: {
+    paddingHorizontal: Spacing.xl,
+  },
+  sectionSubtitle: {
+    paddingHorizontal: Spacing.xl,
+    marginTop: Spacing.xs,
+  },
+  quickActions: {
+    paddingHorizontal: Spacing.xl,
+    gap: Spacing.md,
+  },
+});

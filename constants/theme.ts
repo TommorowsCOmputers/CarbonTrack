@@ -1,30 +1,44 @@
 import { Platform } from "react-native";
 
-const tintColorLight = "#007AFF";
-const tintColorDark = "#0A84FF";
+const tintColorLight = "#2D8659";
+const tintColorDark = "#3A9E6F";
 
 export const Colors = {
   light: {
     text: "#11181C",
     buttonText: "#FFFFFF",
-    tabIconDefault: "#687076",
+    tabIconDefault: "#7F8C8D",
     tabIconSelected: tintColorLight,
-    link: "#007AFF",
-    backgroundRoot: "#FFFFFF", // Elevation 0
-    backgroundDefault: "#F2F2F2", // Elevation 1
-    backgroundSecondary: "#E6E6E6", // Elevation 2
-    backgroundTertiary: "#D9D9D9", // Elevation 3
+    link: "#2D8659",
+    backgroundRoot: "#FFFFFF",
+    backgroundDefault: "#F8F9FA",
+    backgroundSecondary: "#E6E6E6",
+    backgroundTertiary: "#D9D9D9",
+    primary: "#2D8659",
+    secondary: "#4A90E2",
+    amber: "#F5A623",
+    red: "#D0021B",
+    neutral: "#7F8C8D",
+    earthTone: "#8B7355",
+    cardBackground: "#FFFFFF",
   },
   dark: {
     text: "#ECEDEE",
     buttonText: "#FFFFFF",
     tabIconDefault: "#9BA1A6",
     tabIconSelected: tintColorDark,
-    link: "#0A84FF",
-    backgroundRoot: "#1F2123", // Elevation 0
-    backgroundDefault: "#2A2C2E", // Elevation 1
-    backgroundSecondary: "#353739", // Elevation 2
-    backgroundTertiary: "#404244", // Elevation 3
+    link: "#3A9E6F",
+    backgroundRoot: "#1F2123",
+    backgroundDefault: "#2A2C2E",
+    backgroundSecondary: "#353739",
+    backgroundTertiary: "#404244",
+    primary: "#3A9E6F",
+    secondary: "#5BA3F5",
+    amber: "#FFB84D",
+    red: "#FF4D4D",
+    neutral: "#9BA1A6",
+    earthTone: "#A68A6F",
+    cardBackground: "#2A2C2E",
   },
 };
 
@@ -56,38 +70,43 @@ export const BorderRadius = {
 export const Typography = {
   h1: {
     fontSize: 32,
-    lineHeight: 40,
     fontWeight: "700" as const,
   },
   h2: {
     fontSize: 28,
-    lineHeight: 36,
     fontWeight: "700" as const,
   },
   h3: {
     fontSize: 24,
-    lineHeight: 32,
     fontWeight: "600" as const,
   },
   h4: {
     fontSize: 20,
-    lineHeight: 28,
     fontWeight: "600" as const,
   },
   body: {
     fontSize: 16,
-    lineHeight: 24,
     fontWeight: "400" as const,
   },
   small: {
     fontSize: 14,
-    lineHeight: 20,
     fontWeight: "400" as const,
   },
   link: {
     fontSize: 16,
-    lineHeight: 24,
     fontWeight: "400" as const,
+  },
+  caption: {
+    fontSize: 14,
+    fontWeight: "400" as const,
+  },
+  display: {
+    fontSize: 48,
+    fontWeight: "700" as const,
+  },
+  motivational: {
+    fontSize: 18,
+    fontWeight: "500" as const,
   },
 };
 
