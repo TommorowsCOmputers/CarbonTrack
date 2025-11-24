@@ -4,18 +4,24 @@ import { ThemedText } from "@/components/ThemedText";
 import { Card } from "@/components/Card";
 import { Spacing, Typography, BorderRadius } from "@/constants/theme";
 import { useTheme } from "@/hooks/useTheme";
-import { US_AVERAGE_DAILY_TONS } from "@/utils/constants";
+import { AVERAGE_ANNUAL_TONS_PER_PERSON } from "@/utils/constants";
 
 interface CarbonDisplayProps {
   dailyTons: number;
+  occupants: number;
 }
 
-export function CarbonDisplay({ dailyTons }: CarbonDisplayProps) {
+export function CarbonDisplay({ dailyTons, occupants }: CarbonDisplayProps) {
   const { theme } = useTheme();
-  const isAboveAverage = dailyTons > US_AVERAGE_DAILY_TONS;
+  
+  // Calculate average daily tons based on household size
+  // 12 metric tons per year per person, multiplied by household size, then divided by 365
+  const averageDailyTons = (AVERAGE_ANNUAL_TONS_PER_PERSON * occupants) / 365;
+  
+  const isAboveAverage = dailyTons > averageDailyTons;
   
   // Calculate percentage difference from average
-  const percentageDifference = Math.abs((dailyTons - US_AVERAGE_DAILY_TONS) / US_AVERAGE_DAILY_TONS) * 100;
+  const percentageDifference = Math.abs((dailyTons - averageDailyTons) / averageDailyTons) * 100;
 
   return (
     <View

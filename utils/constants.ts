@@ -29,4 +29,5 @@ export const OFFSET_OPTIONS = [
   },
 ];
 
-export const US_AVERAGE_DAILY_TONS = 0.044;
+// 12 metric tons per year per person is the global average baseline
+export const AVERAGE_ANNUAL_TONS_PER_PERSON = 12;

@@ -22,7 +22,7 @@ interface HomeScreenProps {
 
 export default function HomeScreen({ navigation }: HomeScreenProps) {
   const { theme } = useTheme();
-  const { footprint, recommendations, resetSurvey } = useApp();
+  const { footprint, recommendations, resetSurvey, surveyData } = useApp();
   const [messageIndex, setMessageIndex] = useState(0);
 
   useEffect(() => {
@@ -58,7 +58,7 @@ export default function HomeScreen({ navigation }: HomeScreenProps) {
 
   return (
     <ScreenScrollView>
-      <CarbonDisplay dailyTons={footprint.daily} />
+      <CarbonDisplay dailyTons={footprint.daily} occupants={surveyData?.occupants || 1} />
 
       <Spacer height={Spacing["2xl"]} />
 
