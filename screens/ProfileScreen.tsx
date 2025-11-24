@@ -17,19 +17,19 @@ const AVATARS = {
 
 export default function ProfileScreen() {
   const { theme } = useTheme();
-  const { userProfile, resetData } = useApp();
+  const { userProfile, resetSurvey } = useApp();
 
   const handleReset = () => {
     Alert.alert(
       "Retake Survey",
-      "This will reset all your data and you'll need to retake the carbon footprint survey. Are you sure?",
+      "This will reset your survey data and you'll start over. Your profile will be saved. Continue?",
       [
         { text: "Cancel", style: "cancel" },
         {
           text: "Reset",
           style: "destructive",
           onPress: async () => {
-            await resetData();
+            await resetSurvey();
           },
         },
       ]

@@ -14,6 +14,7 @@ import {
   saveCompletedAction,
   removeCompletedAction,
   clearAllData,
+  clearSurveyData,
 } from "@/utils/storage";
 import {
   calculateCarbonFootprint,
@@ -29,6 +30,7 @@ interface AppContextType {
   updateProfile: (name: string, avatar: AvatarType) => Promise<void>;
   completeSurvey: (data: SurveyData) => Promise<void>;
   toggleAction: (actionId: string) => Promise<void>;
+  resetSurvey: () => Promise<void>;
   resetData: () => Promise<void>;
   recommendations: ReturnType<typeof generateRecommendations>;
 }
@@ -104,6 +106,18 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const resetSurvey = async () => {
+    await clearSurveyData();
+    setSurveyData(null);
+    setFootprint(null);
+    setCompletedActions([]);
+    if (userProfile) {
+      const updatedProfile = { ...userProfile, hasCompletedSurvey: false };
+      await saveUserProfile(updatedProfile);
+      setUserProfile(updatedProfile);
+    }
+  };
+
   const resetData = async () => {
     await clearAllData();
     setUserProfile(null);
@@ -128,6 +142,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         updateProfile,
         completeSurvey,
         toggleAction,
+        resetSurvey,
         resetData,
         recommendations,
       }}

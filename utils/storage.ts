@@ -87,6 +87,18 @@ export async function removeCompletedAction(actionId: string): Promise<void> {
   }
 }
 
+export async function clearSurveyData(): Promise<void> {
+  try {
+    await AsyncStorage.multiRemove([
+      KEYS.SURVEY_DATA,
+      KEYS.COMPLETED_ACTIONS,
+    ]);
+  } catch (error) {
+    console.error("Error clearing survey data:", error);
+    throw error;
+  }
+}
+
 export async function clearAllData(): Promise<void> {
   try {
     await AsyncStorage.multiRemove([

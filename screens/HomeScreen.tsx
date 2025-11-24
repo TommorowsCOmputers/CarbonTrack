@@ -22,7 +22,7 @@ interface HomeScreenProps {
 
 export default function HomeScreen({ navigation }: HomeScreenProps) {
   const { theme } = useTheme();
-  const { footprint, recommendations, resetData } = useApp();
+  const { footprint, recommendations, resetSurvey } = useApp();
   const [messageIndex, setMessageIndex] = useState(0);
 
   useEffect(() => {
@@ -41,14 +41,15 @@ export default function HomeScreen({ navigation }: HomeScreenProps) {
   const handleRetakeSurvey = () => {
     Alert.alert(
       "Retake Survey",
-      "This will reset all your data and you'll need to retake the carbon footprint survey. Are you sure?",
+      "This will reset your survey data and you'll start over. Your profile will be saved. Continue?",
       [
         { text: "Cancel", style: "cancel" },
         {
           text: "Reset",
           style: "destructive",
           onPress: async () => {
-            await resetData();
+            await resetSurvey();
+            navigation?.navigate("Survey", { step: 1 });
           },
         },
       ]
