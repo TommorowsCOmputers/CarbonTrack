@@ -9,6 +9,7 @@ import ActionsStackNavigator from "@/navigation/ActionsStackNavigator";
 import ProfileStackNavigator from "@/navigation/ProfileStackNavigator";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import DevicesScreen from "@/screens/DevicesScreen";
+import RetakeSurveyScreen from "@/screens/RetakeSurveyScreen";
 import { useTheme } from "@/hooks/useTheme";
 
 export type MainTabParamList = {
@@ -16,16 +17,26 @@ export type MainTabParamList = {
   BreakdownTab: undefined;
   ActionsTab: undefined;
   DevicesTab: undefined;
+  RetakeTab: undefined;
   ProfileTab: undefined;
 };
 
 const DevicesStack = createNativeStackNavigator();
+const RetakeStack = createNativeStackNavigator();
 
 function DevicesStackNavigator() {
   return (
     <DevicesStack.Navigator screenOptions={{ headerShown: false }}>
       <DevicesStack.Screen name="DevicesScreen" component={DevicesScreen} />
     </DevicesStack.Navigator>
+  );
+}
+
+function RetakeStackNavigator() {
+  return (
+    <RetakeStack.Navigator screenOptions={{ headerShown: false }}>
+      <RetakeStack.Screen name="RetakeSurvey" component={RetakeSurveyScreen} initialParams={{ step: 1 }} />
+    </RetakeStack.Navigator>
   );
 }
 
@@ -97,6 +108,16 @@ export default function MainTabNavigator() {
           title: "Devices",
           tabBarIcon: ({ color, size }) => (
             <Feather name="zap" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="RetakeTab"
+        component={RetakeStackNavigator}
+        options={{
+          title: "Retake",
+          tabBarIcon: ({ color, size }) => (
+            <Feather name="repeat" size={size} color={color} />
           ),
         }}
       />
