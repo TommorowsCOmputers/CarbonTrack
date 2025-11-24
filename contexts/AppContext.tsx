@@ -108,15 +108,14 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   };
 
   const resetSurvey = async () => {
-    await clearSurveyData();
-    setSurveyData(null);
-    setFootprint(null);
-    setCompletedActions([]);
     if (userProfile) {
       const updatedProfile = { ...userProfile, hasCompletedSurvey: false };
       await saveUserProfile(updatedProfile);
+      await clearSurveyData();
       setUserProfile(updatedProfile);
-      navigateToSurvey();
+      setSurveyData(null);
+      setFootprint(null);
+      setCompletedActions([]);
     }
   };
 
