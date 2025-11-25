@@ -15,7 +15,7 @@
     "android": {
       "package": "com.carbontracker.app",
       "adaptiveIcon": {
-        "backgroundColor": "#2D8659",
+        "backgroundColor": "#003D4D",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
