@@ -10,13 +10,10 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.javenly.carbontracker",
-      "config": {
-        "googleMobileAdsAppId": "ca-app-pub-6040063651962532~5883851251"
-      }
+      "bundleIdentifier": "com.javenly.carbontracker.app"
     },
     "android": {
-      "package": "com.javenly.carbontracker",
+      "package": "com.javenly.carbontracker.app",
       "adaptiveIcon": {
         "backgroundColor": "#003D4D",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
@@ -24,10 +21,7 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false,
-      "config": {
-        "googleMobileAdsAppId": "ca-app-pub-6040063651962532~7604127030"
-      }
+      "predictiveBackGestureEnabled": false
     },
     "web": {
       "output": "single",
