@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { View, StyleSheet, Platform } from "react-native";
 import { BannerAd, BannerAdSize, TestIds } from "react-native-google-mobile-ads";
+import Constants from "expo-constants";
 import { Spacing } from "@/constants/theme";
 
 interface AdBannerProps {
@@ -12,9 +13,11 @@ const getAdUnitId = () => {
     return TestIds.ADAPTIVE_BANNER;
   }
   
+  const extra = Constants.expoConfig?.extra;
+  
   return Platform.select({
-    ios: process.env.ADMOB_BANNER_IOS || TestIds.ADAPTIVE_BANNER,
-    android: process.env.ADMOB_BANNER_ANDROID || TestIds.ADAPTIVE_BANNER,
+    ios: extra?.ADMOB_BANNER_IOS || TestIds.ADAPTIVE_BANNER,
+    android: extra?.ADMOB_BANNER_ANDROID || TestIds.ADAPTIVE_BANNER,
     default: TestIds.ADAPTIVE_BANNER,
   });
 };
