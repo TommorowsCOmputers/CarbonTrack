@@ -5,6 +5,7 @@ import { CarbonDisplay } from "@/components/CarbonDisplay";
 import { QuickActionCard } from "@/components/QuickActionCard";
 import { OffsetCard } from "@/components/OffsetCard";
 import { ScreenScrollView } from "@/components/ScreenScrollView";
+import { AdBanner } from "@/components/AdBanner";
 import Spacer from "@/components/Spacer";
 import { Spacing, Typography } from "@/constants/theme";
 import { useTheme } from "@/hooks/useTheme";
@@ -111,6 +112,10 @@ export default function HomeScreen() {
           <Spacer height={Spacing.lg} />
         </View>
       ))}
+
+      <Spacer height={Spacing.xl} />
+      
+      <AdBanner />
 
       <Spacer height={Spacing["3xl"]} />
     </ScreenScrollView>

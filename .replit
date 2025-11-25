@@ -37,6 +37,10 @@ localPort = 41455
 externalPort = 5000
 
 [[ports]]
+localPort = 42841
+externalPort = 6800
+
+[[ports]]
 localPort = 44755
 externalPort = 3003
 
@@ -117,3 +121,4 @@ value = "0"
 
 [userenv.shared]
 ADMOB_BANNER_IOS = "ca-app-pub-6040063651962532/5852061667"
+ADMOB_BANNER_ANDROID = "ca-app-pub-6040063651962532/9512105076"

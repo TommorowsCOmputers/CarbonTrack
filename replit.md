@@ -149,10 +149,30 @@ Preferred communication style: Simple, everyday language.
 - **react-native-keyboard-controller**: Keyboard management
 - **react-native-worklets**: Background task processing
 
+### Advertising
+- **react-native-google-mobile-ads**: AdMob integration for banner ads
+- **expo-dev-client**: Required for custom native builds (ads don't work in Expo Go)
+
+**AdMob Configuration:**
+- Android App ID: `ca-app-pub-6040063651962532~7604127030`
+- iOS App ID: `ca-app-pub-6040063651962532~5883851251`
+- Banner ad unit IDs stored as environment variables (ADMOB_BANNER_IOS, ADMOB_BANNER_ANDROID)
+- Uses test ads in development mode automatically
+
+**Important:** Ads require a Development Build (not Expo Go). Build with:
+```bash
+npx expo prebuild
+npx expo run:android  # or run:ios
+```
+
+### Notifications
+- **expo-notifications**: Daily motivational message notifications
+- Scheduled at 9 AM daily when enabled via Profile screen toggle
+- 40 rotating motivational messages stored in utils/constants.ts
+
 ### Notable Exclusions
 - No backend server or API
 - No authentication service
 - No analytics or crash reporting (by design for privacy)
 - No cloud storage or sync (local-first architecture)
 - No payment processing (free app)
-- No push notifications
