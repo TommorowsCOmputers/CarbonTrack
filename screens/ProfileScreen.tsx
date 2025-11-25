@@ -1,18 +1,12 @@
 import React from "react";
-import { StyleSheet, View, Image, Alert } from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
+import { StyleSheet, View, Image } from "react-native";
 import { ThemedText } from "@/components/ThemedText";
-import { Button } from "@/components/Button";
 import { Card } from "@/components/Card";
 import { ScreenScrollView } from "@/components/ScreenScrollView";
 import Spacer from "@/components/Spacer";
 import { Spacing, BorderRadius } from "@/constants/theme";
 import { useTheme } from "@/hooks/useTheme";
 import { useApp } from "@/contexts/AppContext";
-import type { MainTabParamList } from "@/navigation/MainTabNavigator";
-
-type ProfileScreenNavigationProp = BottomTabNavigationProp<MainTabParamList, "ProfileTab">;
 
 const AVATARS = {
   leaf: require("@/assets/avatars/leaf.png"),
@@ -22,26 +16,7 @@ const AVATARS = {
 
 export default function ProfileScreen() {
   const { theme } = useTheme();
-  const { userProfile, resetSurvey } = useApp();
-  const navigation = useNavigation<ProfileScreenNavigationProp>();
-
-  const handleReset = () => {
-    Alert.alert(
-      "Retake Survey",
-      "This will reset your survey data and you'll start over. Your profile will be saved. Continue?",
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "Reset",
-          style: "destructive",
-          onPress: async () => {
-            await resetSurvey();
-            navigation.navigate("RetakeTab" as any);
-          },
-        },
-      ]
-    );
-  };
+  const { userProfile } = useApp();
 
   if (!userProfile) {
     return null;
@@ -63,31 +38,12 @@ export default function ProfileScreen() {
       <Spacer height={Spacing["3xl"]} />
 
       <ThemedText type="h3" style={styles.sectionTitle}>
-        Survey
-      </ThemedText>
-      <Spacer height={Spacing.md} />
-      <Card elevation={1} style={styles.card}>
-        <ThemedText type="body" style={styles.cardTitle}>
-          Carbon Footprint Survey
-        </ThemedText>
-        <ThemedText type="small" style={[styles.cardDescription, { color: theme.neutral }]}>
-          Retake the survey to update your carbon footprint calculation
-        </ThemedText>
-        <Spacer height={Spacing.lg} />
-        <Button onPress={handleReset} style={styles.resetButton}>
-          Retake Survey
-        </Button>
-      </Card>
-
-      <Spacer height={Spacing["2xl"]} />
-
-      <ThemedText type="h3" style={styles.sectionTitle}>
         About
       </ThemedText>
       <Spacer height={Spacing.md} />
       <Card elevation={1} style={styles.card}>
         <ThemedText type="body" style={styles.cardTitle}>
-          Carbon Tracker
+          Javenly CarbonTrack
         </ThemedText>
         <Spacer height={Spacing.sm} />
         <ThemedText type="small" style={[styles.cardDescription, { color: theme.neutral }]}>
@@ -131,8 +87,5 @@ const styles = StyleSheet.create({
   },
   cardDescription: {
     marginTop: Spacing.xs,
-  },
-  resetButton: {
-    backgroundColor: "#F5A623",
   },
 });
