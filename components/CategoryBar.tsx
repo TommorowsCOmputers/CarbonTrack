@@ -45,7 +45,7 @@ export function CategoryBar({ icon, label, value, total, color, occupants, categ
         <View
           style={[
             styles.barFill,
-            { width: `${percentage}%`, backgroundColor: color },
+            { width: `${percentage}%`, backgroundColor: displayColor },
           ]}
         />
       </View>
