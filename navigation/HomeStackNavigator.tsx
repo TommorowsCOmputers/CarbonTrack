@@ -24,7 +24,7 @@ export default function HomeStackNavigator() {
         name="Home"
         component={HomeScreen}
         options={{
-          headerTitle: () => <HeaderTitle title="Carbon Tracker" />,
+          headerTitle: () => <HeaderTitle title="Javenly CarbonTrack" />,
         }}
       />
     </Stack.Navigator>

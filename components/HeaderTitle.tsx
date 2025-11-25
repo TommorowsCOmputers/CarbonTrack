@@ -12,11 +12,10 @@ export function HeaderTitle({ title }: HeaderTitleProps) {
   return (
     <View style={styles.container}>
       <Image
-        source={require("../assets/images/icon.png")}
-        style={styles.icon}
+        source={require("../assets/javenly-logo.png")}
+        style={styles.logo}
         resizeMode="contain"
       />
-      <ThemedText style={styles.title}>{title}</ThemedText>
     </View>
   );
 }
@@ -25,15 +24,10 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "flex-start",
+    justifyContent: "center",
   },
-  icon: {
-    width: 28,
-    height: 28,
-    marginRight: Spacing.sm,
-  },
-  title: {
-    fontSize: 17,
-    fontWeight: "600",
+  logo: {
+    width: 150,
+    height: 50,
   },
 });
