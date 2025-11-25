@@ -36,7 +36,7 @@ export default function ProfileScreen() {
           style: "destructive",
           onPress: async () => {
             await resetSurvey();
-            navigation.navigate("Survey", { step: 1 });
+            navigation.getParent()?.navigate("RetakeTab" as any);
           },
         },
       ]
