@@ -26,16 +26,18 @@ export function CategoryBar({ icon, label, value, total, color, occupants, categ
   const categoryAverage = averageEmissionsPerPerson[categoryKey];
   const isAboveAverage = perPersonEmissions > categoryAverage;
 
+  const displayColor = isAboveAverage ? theme.red : theme.primary;
+
   return (
     <Card elevation={1} style={styles.card}>
       <View style={styles.header}>
         <View style={styles.labelContainer}>
-          <Feather name={icon} size={20} color={color} />
-          <ThemedText type="body" style={styles.label}>
+          <Feather name={icon} size={20} color={displayColor} />
+          <ThemedText type="body" style={[styles.label, { color: displayColor }]}>
             {label}
           </ThemedText>
         </View>
-        <ThemedText type="body" style={[styles.value, { color }]}>
+        <ThemedText type="body" style={[styles.value, { color: displayColor }]}>
           {value.toFixed(2)} metric tons
         </ThemedText>
       </View>
@@ -48,10 +50,10 @@ export function CategoryBar({ icon, label, value, total, color, occupants, categ
         />
       </View>
       <View style={styles.footer}>
-        <ThemedText type="small" style={[styles.percentage, { color: isAboveAverage ? theme.red : theme.primary }]}>
+        <ThemedText type="small" style={[styles.percentage, { color: displayColor }]}>
           {percentage.toFixed(1)}% of total
         </ThemedText>
-        <ThemedText type="small" style={[styles.comparison, { color: isAboveAverage ? theme.red : theme.primary }]}>
+        <ThemedText type="small" style={[styles.comparison, { color: displayColor }]}>
           {(Math.abs((perPersonEmissions - categoryAverage) / categoryAverage) * 100).toFixed(0)}% {isAboveAverage ? "above" : "below"} average
         </ThemedText>
       </View>
