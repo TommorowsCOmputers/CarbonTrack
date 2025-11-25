@@ -68,7 +68,7 @@ export default function BreakdownScreen() {
           Total Annual Emissions
         </ThemedText>
         <ThemedText type="h1" style={[styles.totalValue, { color: theme.primary }]}>
-          {(footprint.total / 1000).toFixed(2)}
+          {footprint.total.toFixed(2)}
         </ThemedText>
         <ThemedText type="body" style={{ color: theme.neutral }}>
           metric tons CO2e/year

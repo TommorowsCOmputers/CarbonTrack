@@ -28,7 +28,7 @@ export function CategoryBar({ icon, label, value, total, color }: CategoryBarPro
           </ThemedText>
         </View>
         <ThemedText type="body" style={[styles.value, { color }]}>
-          {value.toFixed(0)} kg
+          {value.toFixed(2)} metric tons
         </ThemedText>
       </View>
       <View style={[styles.barBackground, { backgroundColor: theme.backgroundSecondary }]}>
