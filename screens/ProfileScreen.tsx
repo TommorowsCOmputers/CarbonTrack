@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet, View, Image, Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 import { ThemedText } from "@/components/ThemedText";
 import { Button } from "@/components/Button";
 import { Card } from "@/components/Card";
@@ -10,10 +10,9 @@ import Spacer from "@/components/Spacer";
 import { Spacing, BorderRadius } from "@/constants/theme";
 import { useTheme } from "@/hooks/useTheme";
 import { useApp } from "@/contexts/AppContext";
-import { navigationRef } from "@/navigation/NavigationRef";
-import type { RootStackParamList } from "@/navigation/RootNavigator";
+import type { MainTabParamList } from "@/navigation/MainTabNavigator";
 
-type ProfileScreenNavigationProp = NativeStackNavigationProp<RootStackParamList>;
+type ProfileScreenNavigationProp = BottomTabNavigationProp<MainTabParamList, "ProfileTab">;
 
 const AVATARS = {
   leaf: require("@/assets/avatars/leaf.png"),
@@ -37,9 +36,7 @@ export default function ProfileScreen() {
           style: "destructive",
           onPress: async () => {
             await resetSurvey();
-            navigationRef.current?.navigate("Main" as any, {
-              screen: "RetakeTab",
-            });
+            navigation.navigate("RetakeTab" as any);
           },
         },
       ]
