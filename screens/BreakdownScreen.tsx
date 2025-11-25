@@ -10,11 +10,13 @@ import { useApp } from "@/contexts/AppContext";
 
 export default function BreakdownScreen() {
   const { theme } = useTheme();
-  const { footprint } = useApp();
+  const { footprint, surveyData } = useApp();
 
-  if (!footprint) {
+  if (!footprint || !surveyData) {
     return null;
   }
+
+  const occupants = surveyData.occupants || 1;
 
   const categories = [
     {
@@ -22,36 +24,42 @@ export default function BreakdownScreen() {
       label: "Heating",
       value: footprint.breakdown.heating,
       color: theme.amber,
+      categoryKey: "heating" as const,
     },
     {
       icon: "zap" as const,
       label: "Electricity",
       value: footprint.breakdown.electricity,
       color: theme.secondary,
+      categoryKey: "electricity" as const,
     },
     {
       icon: "navigation" as const,
       label: "Transportation",
       value: footprint.breakdown.transportation,
       color: theme.red,
+      categoryKey: "transportation" as const,
     },
     {
       icon: "shopping-cart" as const,
       label: "Food",
       value: footprint.breakdown.food,
       color: theme.primary,
+      categoryKey: "food" as const,
     },
     {
       icon: "shopping-bag" as const,
       label: "Shopping",
       value: footprint.breakdown.shopping,
       color: theme.earthTone,
+      categoryKey: "shopping" as const,
     },
     {
       icon: "send" as const,
       label: "Air Travel",
       value: footprint.breakdown.travel,
       color: "#9B59B6",
+      categoryKey: "airTravel" as const,
     },
   ].sort((a, b) => b.value - a.value);
 
@@ -90,6 +98,8 @@ export default function BreakdownScreen() {
             value={category.value}
             total={footprint.total}
             color={category.color}
+            occupants={occupants}
+            categoryKey={category.categoryKey}
           />
           {index < categories.length - 1 ? <Spacer height={Spacing.lg} /> : null}
         </View>

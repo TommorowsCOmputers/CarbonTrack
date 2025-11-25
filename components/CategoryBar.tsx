@@ -5,6 +5,7 @@ import { ThemedText } from "@/components/ThemedText";
 import { Card } from "@/components/Card";
 import { Spacing } from "@/constants/theme";
 import { useTheme } from "@/hooks/useTheme";
+import { averageEmissionsPerPerson } from "@/utils/averageEmissions";
 
 interface CategoryBarProps {
   icon: keyof typeof Feather.glyphMap;
@@ -12,11 +13,18 @@ interface CategoryBarProps {
   value: number;
   total: number;
   color: string;
+  occupants: number;
+  categoryKey: keyof typeof averageEmissionsPerPerson;
 }
 
-export function CategoryBar({ icon, label, value, total, color }: CategoryBarProps) {
+export function CategoryBar({ icon, label, value, total, color, occupants, categoryKey }: CategoryBarProps) {
   const { theme } = useTheme();
   const percentage = total > 0 ? (value / total) * 100 : 0;
+  
+  // Calculate per-person emissions for this category
+  const perPersonEmissions = value / occupants;
+  const categoryAverage = averageEmissionsPerPerson[categoryKey];
+  const isAboveAverage = perPersonEmissions > categoryAverage;
 
   return (
     <Card elevation={1} style={styles.card}>
@@ -39,9 +47,14 @@ export function CategoryBar({ icon, label, value, total, color }: CategoryBarPro
           ]}
         />
       </View>
-      <ThemedText type="small" style={[styles.percentage, { color: theme.neutral }]}>
-        {percentage.toFixed(1)}% of total
-      </ThemedText>
+      <View style={styles.footer}>
+        <ThemedText type="small" style={[styles.percentage, { color: theme.neutral }]}>
+          {percentage.toFixed(1)}% of total
+        </ThemedText>
+        <ThemedText type="small" style={[styles.comparison, { color: isAboveAverage ? theme.red : theme.primary }]}>
+          {perPersonEmissions.toFixed(2)} / {categoryAverage.toFixed(2)} per person
+        </ThemedText>
+      </View>
     </Card>
   );
 }
@@ -77,7 +90,16 @@ const styles = StyleSheet.create({
     height: "100%",
     borderRadius: 4,
   },
+  footer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
   percentage: {
     fontSize: 12,
+  },
+  comparison: {
+    fontSize: 12,
+    fontWeight: "600",
   },
 });

@@ -4,6 +4,7 @@ export const averageEmissionsPerPerson = {
   food: 2.0,
   shopping: 1.5,
   heating: 2.8,
+  electricity: 1.0,
   transportation: 4.0,
   airTravel: 0.6,
 };
