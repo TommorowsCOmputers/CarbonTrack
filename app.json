@@ -40,7 +40,14 @@
           }
         }
       ],
-      "expo-web-browser"
+      "expo-web-browser",
+      [
+        "react-native-google-mobile-ads",
+        {
+          "androidAppId": "ca-app-pub-6040063651962532~7604127030",
+          "iosAppId": "ca-app-pub-6040063651962532~5883851251"
+        }
+      ]
     ],
     "experiments": {
       "reactCompiler": true
