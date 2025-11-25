@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, StyleSheet, Switch } from "react-native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ThemedText } from "@/components/ThemedText";
@@ -18,8 +18,12 @@ interface DevicesScreenProps {
 
 export default function DevicesScreen({ navigation }: DevicesScreenProps) {
   const { theme } = useTheme();
-  const { surveyData, updateActiveDevices } = useApp();
-  const [devices, setDevices] = useState(surveyData?.devices || []);
+  const { activeDevices, updateActiveDevices } = useApp();
+  const [devices, setDevices] = useState(activeDevices || []);
+
+  useEffect(() => {
+    setDevices(activeDevices || []);
+  }, [activeDevices]);
 
   const handleToggleDevice = async (deviceId: string) => {
     const updated = devices.map((d) =>
