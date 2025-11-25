@@ -10,6 +10,7 @@ import Spacer from "@/components/Spacer";
 import { Spacing, BorderRadius } from "@/constants/theme";
 import { useTheme } from "@/hooks/useTheme";
 import { useApp } from "@/contexts/AppContext";
+import { navigationRef } from "@/navigation/NavigationRef";
 import type { RootStackParamList } from "@/navigation/RootNavigator";
 
 type ProfileScreenNavigationProp = NativeStackNavigationProp<RootStackParamList>;
@@ -36,7 +37,9 @@ export default function ProfileScreen() {
           style: "destructive",
           onPress: async () => {
             await resetSurvey();
-            navigation.getParent()?.navigate("RetakeTab" as any);
+            navigationRef.current?.navigate("Main" as any, {
+              screen: "RetakeTab",
+            });
           },
         },
       ]
