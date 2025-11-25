@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { View, StyleSheet, Platform } from "react-native";
 import { BannerAd, BannerAdSize, TestIds } from "react-native-google-mobile-ads";
+import Constants from "expo-constants";
 import { Spacing } from "@/constants/theme";
 
 interface AdBannerProps {
@@ -8,13 +9,22 @@ interface AdBannerProps {
   style?: object;
 }
 
-const adUnitId = __DEV__
-  ? TestIds.ADAPTIVE_BANNER
-  : Platform.select({
-      ios: "ca-app-pub-6040063651962532/XXXXXXXXXX",
-      android: "ca-app-pub-6040063651962532/XXXXXXXXXX",
-      default: "",
-    });
+const getAdUnitId = () => {
+  if (__DEV__) {
+    return TestIds.ADAPTIVE_BANNER;
+  }
+  
+  const iosAdUnit = Constants.expoConfig?.extra?.ADMOB_BANNER_IOS || process.env.ADMOB_BANNER_IOS;
+  const androidAdUnit = Constants.expoConfig?.extra?.ADMOB_BANNER_ANDROID || process.env.ADMOB_BANNER_ANDROID;
+  
+  return Platform.select({
+    ios: iosAdUnit || TestIds.ADAPTIVE_BANNER,
+    android: androidAdUnit || TestIds.ADAPTIVE_BANNER,
+    default: TestIds.ADAPTIVE_BANNER,
+  });
+};
+
+const adUnitId = getAdUnitId();
 
 export function AdBanner({ size = BannerAdSize.ANCHORED_ADAPTIVE_BANNER, style }: AdBannerProps) {
   const [adLoaded, setAdLoaded] = useState(false);
