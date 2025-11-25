@@ -4,7 +4,7 @@ import { ThemedText } from "@/components/ThemedText";
 import { Card } from "@/components/Card";
 import { Spacing, Typography, BorderRadius } from "@/constants/theme";
 import { useTheme } from "@/hooks/useTheme";
-import { AVERAGE_ANNUAL_TONS_PER_PERSON } from "@/utils/constants";
+import { getAverageStatus, TOTAL_AVERAGE_PER_PERSON } from "@/utils/averageEmissions";
 
 interface CarbonDisplayProps {
   annualTons: number;
@@ -14,21 +14,18 @@ interface CarbonDisplayProps {
 export function CarbonDisplay({ annualTons, occupants }: CarbonDisplayProps) {
   const { theme } = useTheme();
   
-  // Calculate average annual tons based on household size
-  // 14 metric tons per year per person, multiplied by household size
-  const averageAnnualTons = AVERAGE_ANNUAL_TONS_PER_PERSON * occupants;
+  // Calculate per-person emissions and compare to average
+  const { perPersonEmissions, isAbove, difference } = getAverageStatus(annualTons, occupants);
   
-  const isAboveAverage = annualTons > averageAnnualTons;
-  
-  // Calculate percentage difference from average
-  const percentageDifference = Math.abs((annualTons - averageAnnualTons) / averageAnnualTons) * 100;
+  // Calculate percentage difference from average per person
+  const percentageDifference = (difference / TOTAL_AVERAGE_PER_PERSON) * 100;
 
   return (
     <View
       style={[
         styles.card,
         {
-          backgroundColor: isAboveAverage ? theme.amber : theme.primary,
+          backgroundColor: isAbove ? theme.red : theme.primary,
         },
       ]}
     >
@@ -71,10 +68,10 @@ export function CarbonDisplay({ annualTons, occupants }: CarbonDisplayProps) {
             type="small"
             style={[styles.comparison, { color: "#FFFFFF" }]}
           >
-            {isAboveAverage
+            {isAbove
               ? `${percentageDifference.toFixed(0)}% above`
               : `${percentageDifference.toFixed(0)}% below`}{" "}
-            average
+            average per person
           </ThemedText>
         </View>
       </View>
