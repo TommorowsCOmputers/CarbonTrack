@@ -48,11 +48,11 @@ export function CategoryBar({ icon, label, value, total, color, occupants, categ
         />
       </View>
       <View style={styles.footer}>
-        <ThemedText type="small" style={[styles.percentage, { color: theme.neutral }]}>
+        <ThemedText type="small" style={[styles.percentage, { color: isAboveAverage ? theme.red : theme.primary }]}>
           {percentage.toFixed(1)}% of total
         </ThemedText>
         <ThemedText type="small" style={[styles.comparison, { color: isAboveAverage ? theme.red : theme.primary }]}>
-          {((perPersonEmissions / categoryAverage) * 100).toFixed(0)}% of average
+          {(Math.abs((perPersonEmissions - categoryAverage) / categoryAverage) * 100).toFixed(0)}% {isAboveAverage ? "above" : "below"} average
         </ThemedText>
       </View>
     </Card>
