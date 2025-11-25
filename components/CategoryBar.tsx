@@ -52,7 +52,7 @@ export function CategoryBar({ icon, label, value, total, color, occupants, categ
           {percentage.toFixed(1)}% of total
         </ThemedText>
         <ThemedText type="small" style={[styles.comparison, { color: isAboveAverage ? theme.red : theme.primary }]}>
-          {perPersonEmissions.toFixed(2)} / {categoryAverage.toFixed(2)} per person
+          {((perPersonEmissions / categoryAverage) * 100).toFixed(0)}% of average
         </ThemedText>
       </View>
     </Card>
