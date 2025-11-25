@@ -1,6 +1,13 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { View, StyleSheet, Image, ImageSourcePropType } from "react-native";
 import { Feather } from "@expo/vector-icons";
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withTiming,
+  withDelay,
+  Easing,
+} from "react-native-reanimated";
 import { ThemedText } from "@/components/ThemedText";
 import { Card } from "@/components/Card";
 import { Spacing } from "@/constants/theme";
@@ -16,13 +23,30 @@ interface CategoryBarProps {
   occupants: number;
   categoryKey: keyof typeof averageEmissionsPerPerson;
   image?: ImageSourcePropType;
+  animationDelay?: number;
 }
 
-export function CategoryBar({ icon, label, value, total, color, occupants, categoryKey, image }: CategoryBarProps) {
+export function CategoryBar({ icon, label, value, total, color, occupants, categoryKey, image, animationDelay = 0 }: CategoryBarProps) {
   const { theme } = useTheme();
   const percentage = total > 0 ? (value / total) * 100 : 0;
   
-  // Calculate per-person emissions for this category
+  const animatedWidth = useSharedValue(0);
+  
+  useEffect(() => {
+    animatedWidth.value = 0;
+    animatedWidth.value = withDelay(
+      animationDelay,
+      withTiming(percentage, {
+        duration: 1000,
+        easing: Easing.bezier(0.25, 0.1, 0.25, 1),
+      })
+    );
+  }, [percentage, animationDelay]);
+  
+  const animatedBarStyle = useAnimatedStyle(() => ({
+    width: `${animatedWidth.value}%`,
+  }));
+  
   const perPersonEmissions = value / occupants;
   const categoryAverage = averageEmissionsPerPerson[categoryKey];
   const isAboveAverage = perPersonEmissions > categoryAverage;
@@ -51,10 +75,11 @@ export function CategoryBar({ icon, label, value, total, color, occupants, categ
         </ThemedText>
       </View>
       <View style={[styles.barBackground, { backgroundColor: theme.backgroundSecondary }]}>
-        <View
+        <Animated.View
           style={[
             styles.barFill,
-            { width: `${percentage}%`, backgroundColor: displayColor },
+            { backgroundColor: displayColor },
+            animatedBarStyle,
           ]}
         />
       </View>

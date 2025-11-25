@@ -16,6 +16,9 @@ import { Spacing } from "@/constants/theme";
 
 const { width, height } = Dimensions.get("window");
 
+const BRAND_PRIMARY = "#00D4FF";
+const BRAND_BACKGROUND = "#003D4D";
+
 interface CO2ParticleProps {
   delay: number;
   startX: number;
@@ -185,7 +188,7 @@ export default function LoadingScreen({ onFinish }: LoadingScreenProps) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#0A3D2E",
+    backgroundColor: BRAND_BACKGROUND,
   },
   background: {
     flex: 1,
@@ -209,7 +212,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.xl,
   },
   title: {
-    color: "#FFFFFF",
+    color: BRAND_PRIMARY,
     textAlign: "center",
     marginBottom: Spacing.sm,
   },
@@ -221,15 +224,15 @@ const styles = StyleSheet.create({
     position: "absolute",
   },
   particleInner: {
-    backgroundColor: "rgba(255, 255, 255, 0.15)",
+    backgroundColor: `${BRAND_PRIMARY}25`,
     borderRadius: 20,
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.3)",
+    borderColor: `${BRAND_PRIMARY}50`,
   },
   particleText: {
-    color: "rgba(255, 255, 255, 0.9)",
+    color: BRAND_PRIMARY,
     fontSize: 14,
     fontWeight: "600",
   },

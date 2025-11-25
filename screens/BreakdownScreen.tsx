@@ -104,6 +104,7 @@ export default function BreakdownScreen() {
             occupants={occupants}
             categoryKey={category.categoryKey}
             image={(category as any).image}
+            animationDelay={index * 100}
           />
           {index < categories.length - 1 ? <Spacer height={Spacing.lg} /> : null}
         </View>
