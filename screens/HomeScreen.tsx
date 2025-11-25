@@ -34,7 +34,11 @@ export default function HomeScreen() {
     <ScreenScrollView>
       <CarbonDisplay annualTons={footprint.total} occupants={surveyData?.occupants || 1} />
 
-      <Spacer height={Spacing["2xl"]} />
+      <Spacer height={Spacing.lg} />
+      
+      <AdBanner />
+
+      <Spacer height={Spacing.lg} />
 
       <View style={styles.motivationalContainer}>
         <ThemedText
@@ -112,10 +116,6 @@ export default function HomeScreen() {
           <Spacer height={Spacing.lg} />
         </View>
       ))}
-
-      <Spacer height={Spacing.xl} />
-      
-      <AdBanner />
 
       <Spacer height={Spacing["3xl"]} />
     </ScreenScrollView>
