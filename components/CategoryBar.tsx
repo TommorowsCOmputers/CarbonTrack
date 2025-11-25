@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Image, ImageSourcePropType } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { ThemedText } from "@/components/ThemedText";
 import { Card } from "@/components/Card";
@@ -15,9 +15,10 @@ interface CategoryBarProps {
   color: string;
   occupants: number;
   categoryKey: keyof typeof averageEmissionsPerPerson;
+  image?: ImageSourcePropType;
 }
 
-export function CategoryBar({ icon, label, value, total, color, occupants, categoryKey }: CategoryBarProps) {
+export function CategoryBar({ icon, label, value, total, color, occupants, categoryKey, image }: CategoryBarProps) {
   const { theme } = useTheme();
   const percentage = total > 0 ? (value / total) * 100 : 0;
   
@@ -32,7 +33,15 @@ export function CategoryBar({ icon, label, value, total, color, occupants, categ
     <Card elevation={1} style={styles.card}>
       <View style={styles.header}>
         <View style={styles.labelContainer}>
-          <Feather name={icon} size={20} color={displayColor} />
+          {image ? (
+            <Image
+              source={image}
+              style={[styles.image, { tintColor: displayColor }]}
+              resizeMode="contain"
+            />
+          ) : (
+            <Feather name={icon} size={20} color={displayColor} />
+          )}
           <ThemedText type="body" style={[styles.label, { color: displayColor }]}>
             {label}
           </ThemedText>
@@ -75,6 +84,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: Spacing.sm,
+  },
+  image: {
+    width: 20,
+    height: 20,
   },
   label: {
     fontWeight: "600",

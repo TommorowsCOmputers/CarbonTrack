@@ -8,6 +8,8 @@ import { Spacing } from "@/constants/theme";
 import { useTheme } from "@/hooks/useTheme";
 import { useApp } from "@/contexts/AppContext";
 
+const carImage = require("../assets/car-transportation.webp");
+
 export default function BreakdownScreen() {
   const { theme } = useTheme();
   const { footprint, surveyData } = useApp();
@@ -39,6 +41,7 @@ export default function BreakdownScreen() {
       value: footprint.breakdown.transportation,
       color: theme.red,
       categoryKey: "transportation" as const,
+      image: carImage,
     },
     {
       icon: "shopping-cart" as const,
@@ -100,6 +103,7 @@ export default function BreakdownScreen() {
             color={category.color}
             occupants={occupants}
             categoryKey={category.categoryKey}
+            image={(category as any).image}
           />
           {index < categories.length - 1 ? <Spacer height={Spacing.lg} /> : null}
         </View>
