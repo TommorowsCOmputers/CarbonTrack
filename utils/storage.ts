@@ -7,6 +7,7 @@ const KEYS = {
   COMPLETED_ACTIONS: "@carbon_tracker:completed_actions",
   ACTIVE_DEVICES: "@carbon_tracker:active_devices",
   GOALS: "@carbon_tracker:goals",
+  NOTIFICATIONS_ENABLED: "@carbon_tracker:notifications_enabled",
 };
 
 export async function saveUserProfile(profile: UserProfile): Promise<void> {
@@ -147,9 +148,29 @@ export async function clearAllData(): Promise<void> {
       KEYS.COMPLETED_ACTIONS,
       KEYS.ACTIVE_DEVICES,
       KEYS.GOALS,
+      KEYS.NOTIFICATIONS_ENABLED,
     ]);
   } catch (error) {
     console.error("Error clearing all data:", error);
     throw error;
+  }
+}
+
+export async function saveNotificationsEnabled(enabled: boolean): Promise<void> {
+  try {
+    await AsyncStorage.setItem(KEYS.NOTIFICATIONS_ENABLED, JSON.stringify(enabled));
+  } catch (error) {
+    console.error("Error saving notifications setting:", error);
+    throw error;
+  }
+}
+
+export async function getNotificationsEnabled(): Promise<boolean> {
+  try {
+    const data = await AsyncStorage.getItem(KEYS.NOTIFICATIONS_ENABLED);
+    return data ? JSON.parse(data) : false;
+  } catch (error) {
+    console.error("Error loading notifications setting:", error);
+    return false;
   }
 }
