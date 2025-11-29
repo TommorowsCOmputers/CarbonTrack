@@ -13,6 +13,7 @@ Carbon Tracker is a React Native mobile application built with Expo that helps u
 - Survey retake capability to recalculate footprint
 - Device tracking for carbon-producing appliances
 - Goal setting and progress tracking
+- Eco-challenges calendar with 52 daily specific actionable tasks rotating by date
 
 **Target Platform:** Cross-platform mobile (iOS, Android, Web) using React Native and Expo
 
@@ -28,7 +29,7 @@ Preferred communication style: Simple, everyday language.
 
 **Navigation Structure:**
 - Stack-based root navigation for onboarding flow (Welcome → Survey → Results)
-- Tab-based main navigation with 4 tabs after onboarding completion
+- Tab-based main navigation with 6 tabs after onboarding completion (Home, Actions, Devices, Goals, Challenges, Profile)
 - Nested stack navigators within each tab for deep navigation
 - Centralized navigation reference for programmatic navigation across the app
 
@@ -50,11 +51,12 @@ Preferred communication style: Simple, everyday language.
 
 **Data Models:**
 - **UserProfile:** User name, selected avatar, survey completion status
-- **SurveyData:** 12+ data points covering home, energy, transportation, diet, shopping, and travel
+- **SurveyData:** 13 data points covering home, energy, transportation, diet, shopping, packaged foods, and devices
 - **CarbonFootprint:** Total emissions, daily average, category breakdowns (all in metric tons)
 - **Device:** Trackable carbon-producing devices with on/off states and daily emissions
 - **Goal:** User-defined reduction targets with progress tracking
 - **ActionItem:** Recommended actions with difficulty ratings and estimated impact
+- **EcoChallenge:** 52 daily specific actionable challenges with title, description, daily task, impact, difficulty, and category
 
 **Calculation Engine:**
 - Carbon footprint calculator using EPA emission factors
@@ -169,6 +171,27 @@ npx expo run:android  # or run:ios
 - **expo-notifications**: Daily motivational message notifications
 - Scheduled at 9 AM daily when enabled via Profile screen toggle
 - 40 rotating motivational messages stored in utils/constants.ts
+
+### Eco-Challenges Calendar
+**Feature Overview:**
+- 52 specific daily actionable eco-challenges that rotate based on the current date
+- Calendar view with month/week toggle for browsing challenges
+- Color-coded by category (energy, transport, food, shopping, waste, lifestyle)
+- Difficulty levels (easy, medium, hard) with visual indicators
+- Each challenge includes title, description, specific daily task, and estimated impact
+
+**Implementation:**
+- `utils/ecoChallenges.ts`: Contains 52 concrete daily tasks (e.g., "Bike to Work Today", "Turn Off Every Light", "Shop at Farmers Market")
+- `screens/ChallengesScreen.tsx`: Interactive calendar with month grid and week list views
+- Challenges rotate daily using day-of-year modulo 52 for variety
+- Category colors: Energy (amber), Transport (red), Food (green), Shopping (purple), Waste (brown), Lifestyle (blue)
+- Difficulty colors: Easy (green), Medium (amber), Hard (red)
+- Today's challenge highlighted with cyan border (#00D4FF)
+
+**Navigation:**
+- Accessible via "Challenges" tab in bottom navigation
+- Icon: calendar (Feather icon)
+- No state changes or interaction with carbon calculator (read-only feature)
 
 ### Notable Exclusions
 - No backend server or API

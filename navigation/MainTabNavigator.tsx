@@ -177,9 +177,7 @@ export default function MainTabNavigator() {
               style={styles.closeButton}
               onPress={handleCloseBanner}
             >
-              <ThemedText type="small" style={{ color: "red" }}>
-                ✕
-              </ThemedText>
+              <Feather name="x" size={16} color="#E53935" />
             </TouchableOpacity>
           </Animated.View>
         </SafeAreaView>
