@@ -16,6 +16,7 @@ import ProfileStackNavigator from "@/navigation/ProfileStackNavigator";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import DevicesScreen from "@/screens/DevicesScreen";
 import ChallengesScreen from "@/screens/ChallengesScreen";
+import RetakeSurveyScreen from "@/screens/RetakeSurveyScreen";
 import { useTheme } from "@/hooks/useTheme";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ThemedText } from "@/components/ThemedText";
@@ -27,11 +28,13 @@ export type MainTabParamList = {
   ActionsTab: undefined;
   DevicesTab: undefined;
   ChallengesTab: undefined;
+  RetakeSurveyTab: undefined;
   ProfileTab: undefined;
 };
 
 const DevicesStack = createNativeStackNavigator();
 const ChallengesStack = createNativeStackNavigator();
+const RetakeSurveyStack = createNativeStackNavigator();
 
 function DevicesStackNavigator() {
   return (
@@ -49,6 +52,17 @@ function ChallengesStackNavigator() {
         component={ChallengesScreen}
       />
     </ChallengesStack.Navigator>
+  );
+}
+
+function RetakeSurveyStackNavigator() {
+  return (
+    <RetakeSurveyStack.Navigator screenOptions={{ headerShown: false }}>
+      <RetakeSurveyStack.Screen
+        name="RetakeSurveyScreen"
+        component={RetakeSurveyScreen}
+      />
+    </RetakeSurveyStack.Navigator>
   );
 }
 
@@ -145,6 +159,16 @@ export default function MainTabNavigator() {
             title: "Challenges",
             tabBarIcon: ({ color, size }) => (
               <Feather name="calendar" size={size} color={color} />
+            ),
+          }}
+        />
+        <Tab.Screen
+          name="RetakeSurveyTab"
+          component={RetakeSurveyStackNavigator}
+          options={{
+            title: "Retake",
+            tabBarIcon: ({ color, size }) => (
+              <Feather name="refresh-cw" size={size} color={color} />
             ),
           }}
         />

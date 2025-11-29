@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, View, Image, Switch, Pressable, Alert } from "react-native";
+import { StyleSheet, View, Image, Switch, Pressable } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { ThemedText } from "@/components/ThemedText";
@@ -9,7 +9,10 @@ import Spacer from "@/components/Spacer";
 import { Spacing, BorderRadius } from "@/constants/theme";
 import { useTheme } from "@/hooks/useTheme";
 import { useApp } from "@/contexts/AppContext";
-import { getNotificationsEnabled, saveNotificationsEnabled } from "@/utils/storage";
+import {
+  getNotificationsEnabled,
+  saveNotificationsEnabled,
+} from "@/utils/storage";
 import {
   requestNotificationPermissions,
   scheduleDailyNotification,
@@ -45,7 +48,6 @@ export default function ProfileScreen() {
 
   const handleNotificationToggle = async (value: boolean) => {
     if (isTogglingNotification) return;
-    
     setIsTogglingNotification(true);
     try {
       if (value) {
@@ -56,12 +58,10 @@ export default function ProfileScreen() {
             await saveNotificationsEnabled(true);
             setNotificationsEnabled(true);
           } else {
-            Alert.alert("Failed to schedule notification. Try again.");
             setNotificationsEnabled(false);
           }
         } else {
           setNotificationsEnabled(false);
-          Alert.alert("Permission Required", "Please allow notifications in your device settings to enable daily encouragement messages.");
         }
       } else {
         await cancelAllScheduledNotifications();
@@ -70,7 +70,6 @@ export default function ProfileScreen() {
       }
     } catch (error) {
       console.error("Error toggling notifications:", error);
-      Alert.alert("Error", "Failed to update notification settings. Please try again.");
       setNotificationsEnabled(false);
     } finally {
       setIsTogglingNotification(false);
@@ -82,29 +81,11 @@ export default function ProfileScreen() {
       await sendTestNotification();
     } catch (error) {
       console.error("Error sending test notification:", error);
-      Alert.alert("Error", "Failed to send test notification");
     }
   };
 
   const handleRetakeSurvey = () => {
-    Alert.alert(
-      "Retake Survey",
-      "This will reset your carbon footprint calculation. You'll need to complete the survey again.",
-      [
-        {
-          text: "Cancel",
-          onPress: () => {},
-          style: "cancel",
-        },
-        {
-          text: "Retake Survey",
-          onPress: () => {
-            navigation.navigate("RetakeSurveyStack" as never);
-          },
-          style: "destructive",
-        },
-      ]
-    );
+    navigation.navigate("RetakeSurveyTab" as never);
   };
 
   if (!userProfile) {
@@ -114,11 +95,13 @@ export default function ProfileScreen() {
   return (
     <ScreenScrollView>
       <View style={styles.header}>
-        <View style={[styles.avatarContainer, { backgroundColor: theme.backgroundDefault }]}>
-          <Image
-            source={AVATARS[userProfile.avatar]}
-            style={styles.avatar}
-          />
+        <View
+          style={[
+            styles.avatarContainer,
+            { backgroundColor: theme.backgroundDefault },
+          ]}
+        >
+          <Image source={AVATARS[userProfile.avatar]} style={styles.avatar} />
         </View>
         <Spacer height={Spacing.lg} />
         <ThemedText type="h2">{userProfile.name}</ThemedText>
@@ -139,14 +122,20 @@ export default function ProfileScreen() {
                 Daily Encouragement
               </ThemedText>
             </View>
-            <ThemedText type="small" style={[styles.settingDescription, { color: theme.neutral }]}>
+            <ThemedText
+              type="small"
+              style={[styles.settingDescription, { color: theme.neutral }]}
+            >
               Receive daily motivational messages
             </ThemedText>
           </View>
           <Switch
             value={notificationsEnabled}
             onValueChange={handleNotificationToggle}
-            trackColor={{ false: theme.backgroundSecondary, true: theme.primary }}
+            trackColor={{
+              false: theme.backgroundSecondary,
+              true: theme.primary,
+            }}
             thumbColor={notificationsEnabled ? "#fff" : "#f4f3f4"}
           />
         </View>
@@ -154,11 +143,17 @@ export default function ProfileScreen() {
           <>
             <Spacer height={Spacing.md} />
             <Pressable
-              style={[styles.testButton, { backgroundColor: theme.backgroundSecondary }]}
+              style={[
+                styles.testButton,
+                { backgroundColor: theme.backgroundSecondary },
+              ]}
               onPress={handleTestNotification}
             >
               <Feather name="send" size={16} color={theme.primary} />
-              <ThemedText type="small" style={{ color: theme.primary, marginLeft: Spacing.sm }}>
+              <ThemedText
+                type="small"
+                style={{ color: theme.primary, marginLeft: Spacing.sm }}
+              >
                 Send Test Notification
               </ThemedText>
             </Pressable>
@@ -174,16 +169,33 @@ export default function ProfileScreen() {
       <Spacer height={Spacing.md} />
       <Card elevation={1} style={styles.card}>
         <Pressable
-          style={[styles.actionButton, { backgroundColor: theme.backgroundSecondary }]}
+          style={[
+            styles.actionButton,
+            { backgroundColor: theme.backgroundSecondary },
+          ]}
           onPress={handleRetakeSurvey}
         >
           <Feather name="refresh-cw" size={18} color={theme.primary} />
-          <ThemedText type="body" style={{ color: theme.primary, marginLeft: Spacing.md, fontWeight: "600" }}>
+          <ThemedText
+            type="body"
+            style={{
+              color: theme.primary,
+              marginLeft: Spacing.md,
+              fontWeight: "600",
+            }}
+          >
             Retake Survey
           </ThemedText>
         </Pressable>
-        <ThemedText type="small" style={[styles.actionDescription, { color: theme.neutral, marginTop: Spacing.md }]}>
-          Update your carbon footprint calculation with new lifestyle information
+        <ThemedText
+          type="small"
+          style={[
+            styles.actionDescription,
+            { color: theme.neutral, marginTop: Spacing.md },
+          ]}
+        >
+          Update your carbon footprint calculation with new lifestyle
+          information
         </ThemedText>
       </Card>
 
@@ -198,11 +210,17 @@ export default function ProfileScreen() {
           Javenly CarbonTrack
         </ThemedText>
         <Spacer height={Spacing.sm} />
-        <ThemedText type="small" style={[styles.cardDescription, { color: theme.neutral }]}>
+        <ThemedText
+          type="small"
+          style={[styles.cardDescription, { color: theme.neutral }]}
+        >
           Version 1.0.0
         </ThemedText>
         <Spacer height={Spacing.md} />
-        <ThemedText type="small" style={[styles.cardDescription, { color: theme.neutral }]}>
+        <ThemedText
+          type="small"
+          style={[styles.cardDescription, { color: theme.neutral }]}
+        >
           Emission factors based on EPA Greenhouse Gas Inventory data (2025)
         </ThemedText>
       </Card>
