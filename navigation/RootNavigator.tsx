@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { View, ActivityIndicator, StyleSheet } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useApp } from "@/contexts/AppContext";
 import { navigationRef } from "@/navigation/NavigationRef";
@@ -6,7 +7,6 @@ import MainTabNavigator from "@/navigation/MainTabNavigator";
 import WelcomeScreen from "@/screens/WelcomeScreen";
 import SurveyScreen from "@/screens/SurveyScreen";
 import ResultsScreen from "@/screens/ResultsScreen";
-import { View, ActivityIndicator, StyleSheet } from "react-native";
 
 export type RootStackParamList = {
   Main: undefined;
@@ -19,7 +19,6 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function RootNavigator() {
   const { userProfile, isLoading } = useApp();
-
   const hasCompletedSurvey = userProfile?.hasCompletedSurvey ?? false;
 
   useEffect(() => {

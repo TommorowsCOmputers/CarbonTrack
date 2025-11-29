@@ -13,7 +13,7 @@ export default function ActionsScreen() {
   const { recommendations, completedActions, toggleAction } = useApp();
 
   return (
-    <ScreenScrollView>
+    <ScreenScrollView contentContainerStyle={styles.scrollContent}>
       <ThemedText type="body" style={[styles.intro, { color: theme.neutral }]}>
         Personalized recommendations to reduce your carbon footprint
       </ThemedText>
@@ -30,7 +30,9 @@ export default function ActionsScreen() {
             completed={completedActions.includes(action.id)}
             onToggle={() => toggleAction(action.id)}
           />
-          {index < recommendations.length - 1 ? <Spacer height={Spacing.lg} /> : null}
+          {index < recommendations.length - 1 ? (
+            <Spacer height={Spacing.lg} />
+          ) : null}
         </View>
       ))}
 
@@ -43,5 +45,9 @@ const styles = StyleSheet.create({
   intro: {
     textAlign: "center",
     paddingHorizontal: Spacing.xl,
+  },
+  scrollContent: {
+    paddingBottom: Spacing["5xl"], // ✅ more generous bottom padding so content clears the global ad
+    paddingHorizontal: Spacing.lg,
   },
 });

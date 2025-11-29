@@ -1,11 +1,16 @@
+// utils/types.ts
+
+// Avatar options for user profile
 export type AvatarType = "leaf" | "tree" | "earth";
 
+// Basic user profile
 export interface UserProfile {
   name: string;
   avatar: AvatarType;
   hasCompletedSurvey: boolean;
 }
 
+// Extra carbon‑emitting devices
 export interface Device {
   id: string;
   name: string;
@@ -14,6 +19,7 @@ export interface Device {
   isOn: boolean;
 }
 
+// Survey answers collected from the user
 export interface SurveyData {
   homeSize: "small" | "medium" | "large" | "very-large";
   occupants: number;
@@ -29,9 +35,14 @@ export interface SurveyData {
   dietType: "meat-heavy" | "average" | "vegetarian" | "vegan";
   shoppingHabits: "minimal" | "average" | "frequent";
   flightsPerYear: number;
+
+  // ✅ new field for packaged/processed food consumption
+  packagedFood: "minimal" | "average" | "high";
+
   devices?: Device[];
 }
 
+// Goals for reducing carbon footprint
 export interface Goal {
   id: string;
   title: string;
@@ -40,9 +51,10 @@ export interface Goal {
   completed: boolean;
 }
 
+// Carbon footprint calculation result
 export interface CarbonFootprint {
-  total: number;
-  daily: number;
+  total: number; // metric tons per year
+  daily: number; // metric tons per day
   breakdown: {
     heating: number;
     electricity: number;
@@ -53,6 +65,7 @@ export interface CarbonFootprint {
   };
 }
 
+// Suggested action items for reduction
 export interface ActionItem {
   id: string;
   category: string;

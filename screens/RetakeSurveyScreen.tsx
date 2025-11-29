@@ -12,25 +12,28 @@ import Spacer from "@/components/Spacer";
 import { Spacing, BorderRadius } from "@/constants/theme";
 import { useTheme } from "@/hooks/useTheme";
 import { useApp } from "@/contexts/AppContext";
-import { SurveyData } from "@/utils/types";
+import { SurveyData, Device } from "@/utils/types";
 
 export type RetakeSurveyParamList = {
-  RetakeSurvey: { step?: number };
+  RetakeSurvey: { step: number };
 };
 
-type RetakeSurveyNavigationProp = NativeStackNavigationProp<RetakeSurveyParamList, "RetakeSurvey">;
+type RetakeSurveyNavigationProp = NativeStackNavigationProp<
+  RetakeSurveyParamList,
+  "RetakeSurvey"
+>;
 type RetakeSurveyRouteProp = RouteProp<RetakeSurveyParamList, "RetakeSurvey">;
 
-const TOTAL_STEPS = 12;
+const TOTAL_STEPS = 13;
 
 export default function RetakeSurveyScreen() {
   const navigation = useNavigation<RetakeSurveyNavigationProp>();
   const route = useRoute<RetakeSurveyRouteProp>();
   const { theme } = useTheme();
   const { completeSurvey } = useApp();
-  const currentStep = route.params?.step || 1;
+  const currentStep = route.params.step;
 
-  const [formData, setFormData] = useState<Partial<SurveyData>>({
+  const [formData, setFormData] = useState<SurveyData>({
     homeSize: "medium",
     occupants: 2,
     heatingSource: "natural-gas",
@@ -45,6 +48,7 @@ export default function RetakeSurveyScreen() {
     dietType: "average",
     shoppingHabits: "average",
     flightsPerYear: 2,
+    packagedFood: "average",
     devices: [],
   });
 
@@ -54,7 +58,7 @@ export default function RetakeSurveyScreen() {
 
   const updateField = <K extends keyof SurveyData>(
     field: K,
-    value: SurveyData[K]
+    value: SurveyData[K],
   ) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
@@ -63,11 +67,7 @@ export default function RetakeSurveyScreen() {
     if (currentStep < TOTAL_STEPS) {
       navigation.navigate("RetakeSurvey", { step: currentStep + 1 });
     } else {
-      const dataWithDevices = {
-        ...formData,
-        devices: formData.devices || [],
-      } as SurveyData;
-      completeSurvey(dataWithDevices);
+      completeSurvey(formData);
       navigation.getParent()?.navigate("HomeTab" as any);
     }
   };
@@ -75,6 +75,8 @@ export default function RetakeSurveyScreen() {
   const handleBack = () => {
     if (currentStep > 1) {
       navigation.navigate("RetakeSurvey", { step: currentStep - 1 });
+    } else {
+      navigation.goBack();
     }
   };
 
@@ -94,12 +96,9 @@ export default function RetakeSurveyScreen() {
                 { label: "Large (2,000 - 3,000 sq ft)", value: "large" },
                 { label: "Very Large (> 3,000 sq ft)", value: "very-large" },
               ]}
-              selected={formData.homeSize || "medium"}
+              selected={formData.homeSize}
               onSelect={(value) =>
-                updateField(
-                  "homeSize",
-                  value as SurveyData["homeSize"]
-                )
+                updateField("homeSize", value as SurveyData["homeSize"])
               }
             />
           </>
@@ -113,7 +112,7 @@ export default function RetakeSurveyScreen() {
             </ThemedText>
             <Spacer height={Spacing.xl} />
             <NumberInput
-              value={formData.occupants || 2}
+              value={formData.occupants}
               onChange={(value) => updateField("occupants", value)}
               min={1}
               max={10}
@@ -137,7 +136,7 @@ export default function RetakeSurveyScreen() {
                 { label: "Propane", value: "propane" },
                 { label: "No Heating", value: "none" },
               ]}
-              selected={formData.heatingSource || "natural-gas"}
+              selected={formData.heatingSource}
               onSelect={(value) =>
                 updateField("heatingSource", value as SurveyData["heatingSource"])
               }
@@ -151,9 +150,12 @@ export default function RetakeSurveyScreen() {
                 { label: "Average (Standard usage)", value: "average" },
                 { label: "High (Many appliances, AC/heat)", value: "high" },
               ]}
-              selected={formData.electricityUsage || "average"}
+              selected={formData.electricityUsage}
               onSelect={(value) =>
-                updateField("electricityUsage", value as SurveyData["electricityUsage"])
+                updateField(
+                  "electricityUsage",
+                  value as SurveyData["electricityUsage"],
+                )
               }
             />
           </>
@@ -178,12 +180,12 @@ export default function RetakeSurveyScreen() {
                 { label: "Electric", value: "electric" },
                 { label: "No Vehicle", value: "none" },
               ]}
-              selected={formData.vehicleType || "gas"}
+              selected={formData.vehicleType}
               onSelect={(value) =>
                 updateField("vehicleType", value as SurveyData["vehicleType"])
               }
             />
-            {formData.vehicleType !== "none" ? (
+            {formData.vehicleType !== "none" && (
               <>
                 <Spacer height={Spacing["2xl"]} />
                 <ThemedText type="body" style={styles.subQuestion}>
@@ -191,14 +193,14 @@ export default function RetakeSurveyScreen() {
                 </ThemedText>
                 <Spacer height={Spacing.md} />
                 <NumberInput
-                  value={formData.vehicleMiles || 100}
+                  value={formData.vehicleMiles}
                   onChange={(value) => updateField("vehicleMiles", value)}
                   min={0}
                   max={500}
                   step={10}
                 />
               </>
-            ) : null}
+            )}
           </>
         );
 
@@ -216,7 +218,7 @@ export default function RetakeSurveyScreen() {
                 { label: "Vegetarian", value: "vegetarian" },
                 { label: "Vegan", value: "vegan" },
               ]}
-              selected={formData.dietType || "average"}
+              selected={formData.dietType}
               onSelect={(value) =>
                 updateField("dietType", value as SurveyData["dietType"])
               }
@@ -237,9 +239,12 @@ export default function RetakeSurveyScreen() {
                 { label: "Average (Regular shopping)", value: "average" },
                 { label: "Frequent (Regular new purchases)", value: "frequent" },
               ]}
-              selected={formData.shoppingHabits || "average"}
+              selected={formData.shoppingHabits}
               onSelect={(value) =>
-                updateField("shoppingHabits", value as SurveyData["shoppingHabits"])
+                updateField(
+                  "shoppingHabits",
+                  value as SurveyData["shoppingHabits"],
+                )
               }
             />
           </>
@@ -253,14 +258,17 @@ export default function RetakeSurveyScreen() {
             </ThemedText>
             <Spacer height={Spacing.xl} />
             <NumberInput
-              value={formData.ledPercentage || 25}
+              value={formData.ledPercentage}
               onChange={(value) => updateField("ledPercentage", Math.min(value, 100))}
               min={0}
               max={100}
               step={10}
             />
             <Spacer height={Spacing.md} />
-            <ThemedText type="small" style={[styles.hint, { color: theme.neutral }]}>
+            <ThemedText
+              type="small"
+              style={[styles.hint, { color: theme.neutral }]}
+            >
               LED lights use about 75% less energy than incandescent bulbs
             </ThemedText>
           </>
@@ -299,7 +307,7 @@ export default function RetakeSurveyScreen() {
                 { label: "Average (Regular usage)", value: "average" },
                 { label: "High (Long showers, frequent baths)", value: "high" },
               ]}
-              selected={formData.waterUsage || "average"}
+              selected={formData.waterUsage}
               onSelect={(value) =>
                 updateField("waterUsage", value as SurveyData["waterUsage"])
               }
@@ -320,9 +328,12 @@ export default function RetakeSurveyScreen() {
                 { label: "Average (Recycle some items)", value: "average" },
                 { label: "Comprehensive (Recycle most items)", value: "comprehensive" },
               ]}
-              selected={formData.recyclingHabits || "average"}
+              selected={formData.recyclingHabits}
               onSelect={(value) =>
-                updateField("recyclingHabits", value as SurveyData["recyclingHabits"])
+                updateField(
+                  "recyclingHabits",
+                  value as SurveyData["recyclingHabits"],
+                )
               }
             />
           </>
@@ -336,7 +347,7 @@ export default function RetakeSurveyScreen() {
             </ThemedText>
             <Spacer height={Spacing.xl} />
             <NumberInput
-              value={formData.flightsPerYear || 2}
+              value={formData.flightsPerYear}
               onChange={(value) => updateField("flightsPerYear", value)}
               min={0}
               max={20}
@@ -349,6 +360,41 @@ export default function RetakeSurveyScreen() {
         return (
           <>
             <ThemedText type="h2" style={styles.question}>
+              How much of your food is packaged or processed?
+            </ThemedText>
+            <Spacer height={Spacing.xl} />
+            <RadioGroup
+              options={[
+                {
+                  label: "Minimal (Mostly fresh, whole foods)",
+                  value: "minimal",
+                },
+                {
+                  label: "Average (Mix of fresh and packaged)",
+                  value: "average",
+                },
+                { label: "High (Mostly packaged or processed)", value: "high" },
+              ]}
+              selected={formData.packagedFood}
+              onSelect={(value) =>
+                updateField("packagedFood", value as SurveyData["packagedFood"])
+              }
+            />
+            <Spacer height={Spacing.md} />
+            <ThemedText
+              type="small"
+              style={[styles.hint, { color: theme.neutral }]}
+            >
+              Packaged and processed foods often have higher carbon footprints
+              due to manufacturing and packaging.
+            </ThemedText>
+          </>
+        );
+
+      case 13:
+        return (
+          <>
+            <ThemedText type="h2" style={styles.question}>
               Add carbon-producing devices (optional)
             </ThemedText>
             <Spacer height={Spacing.xl} />
@@ -357,13 +403,13 @@ export default function RetakeSurveyScreen() {
             </ThemedText>
             <Spacer height={Spacing.lg} />
 
-            {(formData.devices || []).length > 0 && (
+            {formData.devices && formData.devices.length > 0 && (
               <>
                 <ThemedText type="small" style={styles.subQuestion}>
                   Your devices:
                 </ThemedText>
                 <Spacer height={Spacing.md} />
-                {(formData.devices || []).map((device) => (
+                {formData.devices.map((device) => (
                   <View
                     key={device.id}
                     style={[
@@ -377,15 +423,16 @@ export default function RetakeSurveyScreen() {
                         type="small"
                         style={[styles.hint, { color: theme.neutral }]}
                       >
-                        {device.hoursPerDay}h/day · {device.kgCO2ePerDay.toFixed(1)} kg CO2/day
+                        {device.hoursPerDay}h/day ·{" "}
+                        {device.kgCO2ePerDay.toFixed(1)} kg CO2/day
                       </ThemedText>
                     </View>
                     <Button
                       onPress={() => {
                         const updated = (formData.devices || []).filter(
-                          (d) => d.id !== device.id
+                          (d) => d.id !== device.id,
                         );
-                        updateField("devices", updated);
+                        updateField("devices", updated as Device[]);
                       }}
                       style={styles.removeButton}
                     >
@@ -419,7 +466,10 @@ export default function RetakeSurveyScreen() {
               max={24}
               step={1}
             />
-            <ThemedText type="small" style={[styles.hint, { color: theme.neutral }]}>
+            <ThemedText
+              type="small"
+              style={[styles.hint, { color: theme.neutral }]}
+            >
               Hours per day
             </ThemedText>
             <Spacer height={Spacing.md} />
@@ -430,14 +480,17 @@ export default function RetakeSurveyScreen() {
               max={50}
               step={0.5}
             />
-            <ThemedText type="small" style={[styles.hint, { color: theme.neutral }]}>
+            <ThemedText
+              type="small"
+              style={[styles.hint, { color: theme.neutral }]}
+            >
               kg CO2e per day
             </ThemedText>
             <Spacer height={Spacing.md} />
             <Button
               onPress={() => {
                 if (deviceName.length > 0) {
-                  const newDevice = {
+                  const newDevice: Device = {
                     id: Date.now().toString(),
                     name: deviceName,
                     hoursPerDay: deviceHours,
@@ -445,7 +498,7 @@ export default function RetakeSurveyScreen() {
                     isOn: true,
                   };
                   const updated = [...(formData.devices || []), newDevice];
-                  updateField("devices", updated);
+                  updateField("devices", updated as Device[]);
                   setDeviceName("");
                   setDeviceHours(1);
                   setDeviceEmissions(1);
@@ -464,7 +517,10 @@ export default function RetakeSurveyScreen() {
 
   return (
     <ScreenScrollView contentContainerStyle={styles.content}>
-      <ThemedText type="small" style={[styles.progress, { color: theme.neutral }]}>
+      <ThemedText
+        type="small"
+        style={[styles.progress, { color: theme.neutral }]}
+      >
         Step {currentStep} of {TOTAL_STEPS}
       </ThemedText>
       <Spacer height={Spacing.lg} />
@@ -475,12 +531,17 @@ export default function RetakeSurveyScreen() {
 
       <View style={styles.buttons}>
         {currentStep > 1 ? (
-          <Button onPress={handleBack} style={[styles.button, { backgroundColor: theme.neutral }]}>
+          <Button
+            onPress={handleBack}
+            style={[styles.button, { backgroundColor: theme.neutral }]}
+          >
             Back
           </Button>
-        ) : <View style={styles.button} />}
+        ) : (
+          <View style={styles.button} />
+        )}
         <Button onPress={handleNext} style={styles.button}>
-          {currentStep === TOTAL_STEPS ? "Update" : "Next"}
+          {currentStep === TOTAL_STEPS ? "Finish" : "Next"}
         </Button>
       </View>
     </ScreenScrollView>

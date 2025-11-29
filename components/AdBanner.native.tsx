@@ -6,31 +6,34 @@ import { Spacing } from "@/constants/theme";
 
 interface AdBannerProps {
   style?: object;
+  placement?: "top" | "bottom_home";
 }
 
-const getAdUnitId = () => {
-  if (__DEV__) {
-    return TestIds.ADAPTIVE_BANNER;
-  }
-  
+const getAdUnitId = (placement: string) => {
+  if (__DEV__) return TestIds.ADAPTIVE_BANNER;
+
   const extra = Constants.expoConfig?.extra;
-  
+
   return Platform.select({
-    ios: extra?.ADMOB_BANNER_IOS || TestIds.ADAPTIVE_BANNER,
-    android: extra?.ADMOB_BANNER_ANDROID || TestIds.ADAPTIVE_BANNER,
+    ios:
+      placement === "bottom_home"
+        ? extra?.ADMOB_BANNER_IOS_BOTTOM_HOME
+        : extra?.ADMOB_BANNER_IOS,
+    android:
+      placement === "bottom_home"
+        ? extra?.ADMOB_BANNER_ANDROID_BOTTOM_HOME
+        : extra?.ADMOB_BANNER_ANDROID,
     default: TestIds.ADAPTIVE_BANNER,
   });
 };
 
-export function AdBanner({ style }: AdBannerProps) {
+export function AdBanner({ style, placement = "top" }: AdBannerProps) {
   const [adLoaded, setAdLoaded] = useState(false);
   const [adError, setAdError] = useState(false);
 
-  const adUnitId = getAdUnitId();
+  const adUnitId = getAdUnitId(placement);
 
-  if (adError) {
-    return null;
-  }
+  if (adError) return null;
 
   return (
     <View style={[styles.container, style, !adLoaded && styles.hidden]}>
