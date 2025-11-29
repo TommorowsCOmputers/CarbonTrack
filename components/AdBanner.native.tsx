@@ -1,12 +1,16 @@
 import React, { useState } from "react";
 import { View, StyleSheet, Platform } from "react-native";
-import { BannerAd, BannerAdSize, TestIds } from "react-native-google-mobile-ads";
+import {
+  BannerAd,
+  BannerAdSize,
+  TestIds,
+} from "react-native-google-mobile-ads";
 import Constants from "expo-constants";
 import { Spacing } from "@/constants/theme";
 
 interface AdBannerProps {
   style?: object;
-  placement?: "top" | "bottom_home";
+  placement?: "top" | "bottom_home" | "one" | "two";
 }
 
 const getAdUnitId = (placement: string) => {
@@ -15,14 +19,30 @@ const getAdUnitId = (placement: string) => {
   const extra = Constants.expoConfig?.extra;
 
   return Platform.select({
-    ios:
-      placement === "bottom_home"
-        ? extra?.ADMOB_BANNER_IOS_BOTTOM_HOME
-        : extra?.ADMOB_BANNER_IOS,
-    android:
-      placement === "bottom_home"
-        ? extra?.ADMOB_BANNER_ANDROID_BOTTOM_HOME
-        : extra?.ADMOB_BANNER_ANDROID,
+    ios: (() => {
+      switch (placement) {
+        case "bottom_home":
+          return extra?.ADMOB_BANNER_IOS_BOTTOM_HOME;
+        case "one":
+          return extra?.ADMOB_BANNER_IOS_EXTRA_1;
+        case "two":
+          return extra?.ADMOB_BANNER_IOS_EXTRA_2;
+        default:
+          return extra?.ADMOB_BANNER_IOS;
+      }
+    })(),
+    android: (() => {
+      switch (placement) {
+        case "bottom_home":
+          return extra?.ADMOB_BANNER_ANDROID_BOTTOM_HOME;
+        case "one":
+          return extra?.ADMOB_BANNER_ANDROID_EXTRA_1;
+        case "two":
+          return extra?.ADMOB_BANNER_ANDROID_EXTRA_2;
+        default:
+          return extra?.ADMOB_BANNER_ANDROID;
+      }
+    })(),
     default: TestIds.ADAPTIVE_BANNER,
   });
 };

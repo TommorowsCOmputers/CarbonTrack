@@ -7,6 +7,7 @@ import Spacer from "@/components/Spacer";
 import { Spacing } from "@/constants/theme";
 import { useTheme } from "@/hooks/useTheme";
 import { useApp } from "@/contexts/AppContext";
+import { AdBanner } from "@/components/AdBanner";
 
 const carImage = require("../assets/car-transportation.webp");
 
@@ -75,15 +76,22 @@ export default function BreakdownScreen() {
       <Spacer height={Spacing.lg} />
 
       <View style={styles.totalCard}>
-        <ThemedText type="small" style={[styles.totalLabel, { color: theme.neutral }]}>
+        <ThemedText
+          type="small"
+          style={[styles.totalLabel, { color: theme.neutral }]}
+        >
           Total Annual Emissions
         </ThemedText>
-        <ThemedText type="h1" style={[styles.totalValue, { color: theme.primary }]}>
+        <ThemedText
+          type="h1"
+          style={[styles.totalValue, { color: theme.primary }]}
+        >
           {footprint.total.toFixed(2)}
         </ThemedText>
         <ThemedText type="body" style={{ color: theme.neutral }}>
           metric tons CO2e/year
         </ThemedText>
+        <AdBanner placement="one"></AdBanner>
       </View>
 
       <Spacer height={Spacing["2xl"]} />
@@ -106,7 +114,9 @@ export default function BreakdownScreen() {
             image={(category as any).image}
             animationDelay={index * 100}
           />
-          {index < categories.length - 1 ? <Spacer height={Spacing.lg} /> : null}
+          {index < categories.length - 1 ? (
+            <Spacer height={Spacing.lg} />
+          ) : null}
         </View>
       ))}
 
