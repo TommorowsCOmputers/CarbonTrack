@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, View, Image, Switch, Pressable } from "react-native";
+import { StyleSheet, View, Image, Switch, Pressable, Alert } from "react-native";
 import { Feather } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
 import { ThemedText } from "@/components/ThemedText";
 import { Card } from "@/components/Card";
 import { ScreenScrollView } from "@/components/ScreenScrollView";
@@ -25,34 +26,85 @@ const AVATARS = {
 export default function ProfileScreen() {
   const { theme } = useTheme();
   const { userProfile } = useApp();
+  const navigation = useNavigation();
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
+  const [isTogglingNotification, setIsTogglingNotification] = useState(false);
 
   useEffect(() => {
     loadNotificationSetting();
   }, []);
 
   const loadNotificationSetting = async () => {
-    const enabled = await getNotificationsEnabled();
-    setNotificationsEnabled(enabled);
+    try {
+      const enabled = await getNotificationsEnabled();
+      setNotificationsEnabled(enabled);
+    } catch (error) {
+      console.error("Error loading notification setting:", error);
+    }
   };
 
   const handleNotificationToggle = async (value: boolean) => {
-    if (value) {
-      const hasPermission = await requestNotificationPermissions();
-      if (hasPermission) {
-        await scheduleDailyNotification(9);
-        await saveNotificationsEnabled(true);
-        setNotificationsEnabled(true);
+    if (isTogglingNotification) return;
+    
+    setIsTogglingNotification(true);
+    try {
+      if (value) {
+        const hasPermission = await requestNotificationPermissions();
+        if (hasPermission) {
+          const notifId = await scheduleDailyNotification(9);
+          if (notifId) {
+            await saveNotificationsEnabled(true);
+            setNotificationsEnabled(true);
+          } else {
+            Alert.alert("Failed to schedule notification. Try again.");
+            setNotificationsEnabled(false);
+          }
+        } else {
+          setNotificationsEnabled(false);
+          Alert.alert("Permission Required", "Please allow notifications in your device settings to enable daily encouragement messages.");
+        }
+      } else {
+        await cancelAllScheduledNotifications();
+        await saveNotificationsEnabled(false);
+        setNotificationsEnabled(false);
       }
-    } else {
-      await cancelAllScheduledNotifications();
-      await saveNotificationsEnabled(false);
+    } catch (error) {
+      console.error("Error toggling notifications:", error);
+      Alert.alert("Error", "Failed to update notification settings. Please try again.");
       setNotificationsEnabled(false);
+    } finally {
+      setIsTogglingNotification(false);
     }
   };
 
   const handleTestNotification = async () => {
-    await sendTestNotification();
+    try {
+      await sendTestNotification();
+    } catch (error) {
+      console.error("Error sending test notification:", error);
+      Alert.alert("Error", "Failed to send test notification");
+    }
+  };
+
+  const handleRetakeSurvey = () => {
+    Alert.alert(
+      "Retake Survey",
+      "This will reset your carbon footprint calculation. You'll need to complete the survey again.",
+      [
+        {
+          text: "Cancel",
+          onPress: () => {},
+          style: "cancel",
+        },
+        {
+          text: "Retake Survey",
+          onPress: () => {
+            navigation.navigate("RetakeSurveyStack" as never);
+          },
+          style: "destructive",
+        },
+      ]
+    );
   };
 
   if (!userProfile) {
@@ -112,6 +164,27 @@ export default function ProfileScreen() {
             </Pressable>
           </>
         ) : null}
+      </Card>
+
+      <Spacer height={Spacing["2xl"]} />
+
+      <ThemedText type="h3" style={styles.sectionTitle}>
+        Actions
+      </ThemedText>
+      <Spacer height={Spacing.md} />
+      <Card elevation={1} style={styles.card}>
+        <Pressable
+          style={[styles.actionButton, { backgroundColor: theme.backgroundSecondary }]}
+          onPress={handleRetakeSurvey}
+        >
+          <Feather name="refresh-cw" size={18} color={theme.primary} />
+          <ThemedText type="body" style={{ color: theme.primary, marginLeft: Spacing.md, fontWeight: "600" }}>
+            Retake Survey
+          </ThemedText>
+        </Pressable>
+        <ThemedText type="small" style={[styles.actionDescription, { color: theme.neutral, marginTop: Spacing.md }]}>
+          Update your carbon footprint calculation with new lifestyle information
+        </ThemedText>
       </Card>
 
       <Spacer height={Spacing["2xl"]} />
@@ -194,5 +267,14 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     padding: Spacing.md,
     borderRadius: BorderRadius.md,
+  },
+  actionButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: Spacing.md,
+    borderRadius: BorderRadius.md,
+  },
+  actionDescription: {
+    marginTop: Spacing.md,
   },
 });
