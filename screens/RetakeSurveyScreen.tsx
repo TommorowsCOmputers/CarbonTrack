@@ -31,7 +31,7 @@ export default function RetakeSurveyScreen() {
   const route = useRoute<RetakeSurveyRouteProp>();
   const { theme } = useTheme();
   const { completeSurvey } = useApp();
-  const currentStep = route.params.step;
+  const currentStep = route.params?.step || 1;
 
   const [formData, setFormData] = useState<SurveyData>({
     homeSize: "medium",
