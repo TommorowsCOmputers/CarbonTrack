@@ -4,6 +4,27 @@ const tintColorLight = "#00D4FF";
 const tintColorDark = "#00E5FF";
 const javenelyRed = "#E53935";
 
+export const CategoryColors = {
+  energy: "#FFA000",
+  transport: "#E53935",
+  food: "#43A047",
+  shopping: "#8E24AA",
+  waste: "#6D4C41",
+  lifestyle: "#1E88E5",
+};
+
+export const DifficultyColors = {
+  easy: "#43A047",
+  medium: "#FFA000",
+  hard: "#E53935",
+};
+
+export const BrandColors = {
+  cyan: "#00D4FF",
+  red: "#E53935",
+  green: "#43A047",
+};
+
 export const Colors = {
   light: {
     text: "#11181C",
@@ -22,6 +43,8 @@ export const Colors = {
     neutral: "#7F8C8D",
     earthTone: tintColorLight,
     cardBackground: "#FFFFFF",
+    card: "#FFFFFF",
+    background: "#FFFFFF",
   },
   dark: {
     text: "#ECEDEE",
@@ -40,6 +63,8 @@ export const Colors = {
     neutral: "#9BA1A6",
     earthTone: tintColorDark,
     cardBackground: "#2A2C2E",
+    card: "#2A2C2E",
+    background: "#1F2123",
   },
 };
 

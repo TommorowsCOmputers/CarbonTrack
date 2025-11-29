@@ -91,7 +91,6 @@ export default function BreakdownScreen() {
         <ThemedText type="body" style={{ color: theme.neutral }}>
           metric tons CO2e/year
         </ThemedText>
-        <AdBanner placement="one"></AdBanner>
       </View>
 
       <Spacer height={Spacing["2xl"]} />

@@ -15,7 +15,7 @@ import ActionsStackNavigator from "@/navigation/ActionsStackNavigator";
 import ProfileStackNavigator from "@/navigation/ProfileStackNavigator";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import DevicesScreen from "@/screens/DevicesScreen";
-import RetakeSurveyScreen from "@/screens/RetakeSurveyScreen";
+import ChallengesScreen from "@/screens/ChallengesScreen";
 import { useTheme } from "@/hooks/useTheme";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ThemedText } from "@/components/ThemedText";
@@ -26,12 +26,12 @@ export type MainTabParamList = {
   BreakdownTab: undefined;
   ActionsTab: undefined;
   DevicesTab: undefined;
-  RetakeTab: undefined;
+  ChallengesTab: undefined;
   ProfileTab: undefined;
 };
 
 const DevicesStack = createNativeStackNavigator();
-const RetakeStack = createNativeStackNavigator();
+const ChallengesStack = createNativeStackNavigator();
 
 function DevicesStackNavigator() {
   return (
@@ -41,15 +41,14 @@ function DevicesStackNavigator() {
   );
 }
 
-function RetakeStackNavigator() {
+function ChallengesStackNavigator() {
   return (
-    <RetakeStack.Navigator screenOptions={{ headerShown: false }}>
-      <RetakeStack.Screen
-        name="RetakeSurvey"
-        component={RetakeSurveyScreen}
-        initialParams={{ step: 1 }}
+    <ChallengesStack.Navigator screenOptions={{ headerShown: false }}>
+      <ChallengesStack.Screen
+        name="ChallengesScreen"
+        component={ChallengesScreen}
       />
-    </RetakeStack.Navigator>
+    </ChallengesStack.Navigator>
   );
 }
 
@@ -140,12 +139,12 @@ export default function MainTabNavigator() {
           }}
         />
         <Tab.Screen
-          name="RetakeTab"
-          component={RetakeStackNavigator}
+          name="ChallengesTab"
+          component={ChallengesStackNavigator}
           options={{
-            title: "Retake",
+            title: "Challenges",
             tabBarIcon: ({ color, size }) => (
-              <Feather name="repeat" size={size} color={color} />
+              <Feather name="calendar" size={size} color={color} />
             ),
           }}
         />

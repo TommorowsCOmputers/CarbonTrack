@@ -15,7 +15,6 @@ export default function ActionsScreen() {
 
   return (
     <ScreenScrollView contentContainerStyle={styles.scrollContent}>
-      <AdBanner placement="two"></AdBanner>
       <ThemedText type="body" style={[styles.intro, { color: theme.neutral }]}>
         Personalized recommendations to reduce your carbon footprint
       </ThemedText>
