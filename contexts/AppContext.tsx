@@ -19,6 +19,10 @@ import {
   getActiveDevices,
   saveGoals,
   getGoals,
+  getCarbonCoins,
+  saveCarbonCoins,
+  getCompletedChallenges,
+  saveCompletedChallenges,
 } from "@/utils/storage";
 import {
   calculateCarbonFootprint,
@@ -32,6 +36,8 @@ interface AppContextType {
   completedActions: string[];
   activeDevices: any[];
   goals: any[];
+  carbonCoins: number;
+  completedChallenges: string[];
   isLoading: boolean;
   updateProfile: (name: string, avatar: AvatarType) => Promise<void>;
   completeSurvey: (data: SurveyData) => Promise<void>;
@@ -40,6 +46,7 @@ interface AppContextType {
   resetData: () => Promise<void>;
   updateActiveDevices: (devices: any[]) => Promise<void>;
   updateGoals: (goals: any[]) => Promise<void>;
+  completeChallenge: (challengeId: string, difficulty: "easy" | "medium" | "hard") => Promise<void>;
   recommendations: ReturnType<typeof generateRecommendations>;
 }
 
@@ -52,6 +59,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [completedActions, setCompletedActions] = useState<string[]>([]);
   const [activeDevices, setActiveDevices] = useState<any[]>([]);
   const [goals, setGoals] = useState<any[]>([]);
+  const [carbonCoins, setCarbonCoins] = useState<number>(0);
+  const [completedChallenges, setCompletedChallenges] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -61,12 +70,14 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const loadData = async () => {
     try {
       setIsLoading(true);
-      const [profile, survey, completed, devices, loadedGoals] = await Promise.all([
+      const [profile, survey, completed, devices, loadedGoals, coins, challenges] = await Promise.all([
         getUserProfile(),
         getSurveyData(),
         getCompletedActions(),
         getActiveDevices(),
         getGoals(),
+        getCarbonCoins(),
+        getCompletedChallenges(),
       ]);
 
       setUserProfile(profile);
@@ -74,6 +85,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       setCompletedActions(completed);
       setActiveDevices(devices);
       setGoals(loadedGoals);
+      setCarbonCoins(coins);
+      setCompletedChallenges(challenges);
 
       if (survey) {
         const calculatedFootprint = calculateCarbonFootprint(survey, completed, devices);
@@ -161,6 +174,22 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setGoals(updatedGoals);
   };
 
+  const completeChallenge = async (challengeId: string, difficulty: "easy" | "medium" | "hard") => {
+    if (completedChallenges.includes(challengeId)) {
+      return;
+    }
+
+    const coinReward = difficulty === "easy" ? 1 : difficulty === "medium" ? 2 : 3;
+    const newCoins = carbonCoins + coinReward;
+    const newCompletedChallenges = [...completedChallenges, challengeId];
+
+    await saveCarbonCoins(newCoins);
+    await saveCompletedChallenges(newCompletedChallenges);
+
+    setCarbonCoins(newCoins);
+    setCompletedChallenges(newCompletedChallenges);
+  };
+
   const resetSurvey = async () => {
     if (userProfile) {
       const updatedProfile = { ...userProfile, hasCompletedSurvey: false };
@@ -197,6 +226,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         completedActions,
         activeDevices,
         goals,
+        carbonCoins,
+        completedChallenges,
         isLoading,
         updateProfile,
         completeSurvey,
@@ -205,6 +236,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         resetData,
         updateActiveDevices,
         updateGoals,
+        completeChallenge,
         recommendations,
       }}
     >

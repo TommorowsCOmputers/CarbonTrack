@@ -8,6 +8,8 @@ const KEYS = {
   ACTIVE_DEVICES: "@carbon_tracker:active_devices",
   GOALS: "@carbon_tracker:goals",
   NOTIFICATIONS_ENABLED: "@carbon_tracker:notifications_enabled",
+  CARBON_COINS: "@carbon_tracker:carbon_coins",
+  COMPLETED_CHALLENGES: "@carbon_tracker:completed_challenges",
 };
 
 export async function saveUserProfile(profile: UserProfile): Promise<void> {
@@ -172,5 +174,43 @@ export async function getNotificationsEnabled(): Promise<boolean> {
   } catch (error) {
     console.error("Error loading notifications setting:", error);
     return false;
+  }
+}
+
+export async function saveCarbonCoins(coins: number): Promise<void> {
+  try {
+    await AsyncStorage.setItem(KEYS.CARBON_COINS, JSON.stringify(coins));
+  } catch (error) {
+    console.error("Error saving carbon coins:", error);
+    throw error;
+  }
+}
+
+export async function getCarbonCoins(): Promise<number> {
+  try {
+    const data = await AsyncStorage.getItem(KEYS.CARBON_COINS);
+    return data ? JSON.parse(data) : 0;
+  } catch (error) {
+    console.error("Error loading carbon coins:", error);
+    return 0;
+  }
+}
+
+export async function saveCompletedChallenges(challenges: string[]): Promise<void> {
+  try {
+    await AsyncStorage.setItem(KEYS.COMPLETED_CHALLENGES, JSON.stringify(challenges));
+  } catch (error) {
+    console.error("Error saving completed challenges:", error);
+    throw error;
+  }
+}
+
+export async function getCompletedChallenges(): Promise<string[]> {
+  try {
+    const data = await AsyncStorage.getItem(KEYS.COMPLETED_CHALLENGES);
+    return data ? JSON.parse(data) : [];
+  } catch (error) {
+    console.error("Error loading completed challenges:", error);
+    return [];
   }
 }
