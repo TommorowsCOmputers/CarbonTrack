@@ -69,7 +69,7 @@ export function ActionCard({
       <View style={styles.impact}>
         <Feather name="trending-down" size={16} color={theme.primary} />
         <ThemedText type="small" style={[styles.impactText, { color: theme.primary }]}>
-          Saves ~{(estimatedReduction / 1000).toFixed(2)} metric tons CO2/year
+          Saves ~{estimatedReduction.toFixed(2)} metric tons CO2/year
         </ThemedText>
       </View>
     </Card>
