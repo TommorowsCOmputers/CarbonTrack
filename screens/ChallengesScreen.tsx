@@ -1,12 +1,14 @@
 import React, { useState } from "react";
-import { View, StyleSheet, Pressable, Modal, ScrollView } from "react-native";
+import { View, StyleSheet, Pressable, Modal, ScrollView, Image } from "react-native";
 import { ThemedText } from "@/components/ThemedText";
 import { ScreenScrollView } from "@/components/ScreenScrollView";
 import { Button } from "@/components/Button";
 import Spacer from "@/components/Spacer";
 import { Spacing, BorderRadius, CategoryColors, DifficultyColors, BrandColors } from "@/constants/theme";
 import { useTheme } from "@/hooks/useTheme";
+import { useApp } from "@/contexts/AppContext";
 import { Feather } from "@expo/vector-icons";
+import * as Haptics from "expo-haptics";
 import {
   getChallengeDaySet,
   getChallengesForMonth,
@@ -15,14 +17,35 @@ import {
   type ChallengeDaySet,
 } from "@/utils/ecoChallenges";
 
+const carbonCoinImage = require("@/assets/images/carboncoin.png");
+
+const COIN_REWARDS = {
+  easy: 1,
+  medium: 2,
+  hard: 3,
+} as const;
+
 type ViewMode = "month" | "week";
 
 export default function ChallengesScreen() {
   const { theme, isDark } = useTheme();
+  const { completedChallenges, completeChallenge, carbonCoins } = useApp();
   const [viewMode, setViewMode] = useState<ViewMode>("month");
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [selectedDaySet, setSelectedDaySet] = useState<ChallengeDaySet | null>(null);
   const [showModal, setShowModal] = useState(false);
+
+  const handleCompleteChallenge = async (challenge: EcoChallenge) => {
+    if (completedChallenges.includes(challenge.id)) {
+      return;
+    }
+    await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    await completeChallenge(challenge.id, challenge.difficulty);
+  };
+
+  const isChallengeCompleted = (challengeId: string) => {
+    return completedChallenges.includes(challengeId);
+  };
 
   const currentYear = selectedDate.getFullYear();
   const currentMonth = selectedDate.getMonth();
@@ -293,54 +316,96 @@ export default function ChallengesScreen() {
             </View>
 
             <ScrollView style={styles.modalScroll}>
-              {challenges.map((challenge, index) => (
-                <View
-                  key={challenge.id}
-                  style={[
-                    styles.modalChallengeCard,
-                    {
-                      backgroundColor: isDark ? theme.card + "80" : theme.card,
-                      borderLeftColor: DifficultyColors[challenge.difficulty],
-                    },
-                  ]}
-                >
-                  <View style={styles.modalChallengeHeader}>
-                    <View style={[styles.difficultyBadge, { backgroundColor: DifficultyColors[challenge.difficulty] + "30" }]}>
-                      <ThemedText type="small" style={{ color: DifficultyColors[challenge.difficulty], textTransform: "capitalize" }}>
-                        {challenge.difficulty}
+              {challenges.map((challenge, index) => {
+                const isCompleted = isChallengeCompleted(challenge.id);
+                const coinReward = COIN_REWARDS[challenge.difficulty];
+
+                return (
+                  <View
+                    key={challenge.id}
+                    style={[
+                      styles.modalChallengeCard,
+                      {
+                        backgroundColor: isDark ? theme.card + "80" : theme.card,
+                        borderLeftColor: isCompleted ? "#10B981" : DifficultyColors[challenge.difficulty],
+                      },
+                      isCompleted && styles.completedCard,
+                    ]}
+                  >
+                    <View style={styles.modalChallengeHeader}>
+                      <View style={[styles.difficultyBadge, { backgroundColor: DifficultyColors[challenge.difficulty] + "30" }]}>
+                        <ThemedText type="small" style={{ color: DifficultyColors[challenge.difficulty], textTransform: "capitalize" }}>
+                          {challenge.difficulty}
+                        </ThemedText>
+                      </View>
+                      <View style={styles.categoryBadge}>
+                        <View style={[styles.categoryDot, { backgroundColor: CategoryColors[challenge.category] }]} />
+                        <ThemedText type="small" style={{ color: theme.neutral, textTransform: "capitalize" }}>
+                          {challenge.category}
+                        </ThemedText>
+                      </View>
+                    </View>
+
+                    <ThemedText type="h3" style={[styles.modalChallengeTitle, isCompleted && styles.completedText]}>
+                      {challenge.title}
+                    </ThemedText>
+
+                    <ThemedText type="body" style={[styles.modalChallengeDescription, { color: theme.neutral }]}>
+                      {challenge.description}
+                    </ThemedText>
+
+                    <View style={styles.taskBox}>
+                      <Feather name="check-circle" size={16} color={BrandColors.cyan} />
+                      <ThemedText type="body" style={[styles.taskText, { color: theme.text }]}>
+                        {challenge.daily_task}
                       </ThemedText>
                     </View>
-                    <View style={styles.categoryBadge}>
-                      <View style={[styles.categoryDot, { backgroundColor: CategoryColors[challenge.category] }]} />
-                      <ThemedText type="small" style={{ color: theme.neutral, textTransform: "capitalize" }}>
-                        {challenge.category}
+
+                    <View style={styles.impactBox}>
+                      <Feather name="trending-down" size={14} color="#10B981" />
+                      <ThemedText type="small" style={{ color: "#10B981", marginLeft: Spacing.xs }}>
+                        {challenge.estimated_impact}
                       </ThemedText>
                     </View>
+
+                    <View style={styles.completeSection}>
+                      <Pressable
+                        style={[
+                          styles.completeButton,
+                          {
+                            backgroundColor: isCompleted ? "#10B981" : theme.backgroundSecondary,
+                            borderColor: isCompleted ? "#10B981" : theme.primary,
+                          },
+                        ]}
+                        onPress={() => handleCompleteChallenge(challenge)}
+                        disabled={isCompleted}
+                      >
+                        <Feather
+                          name={isCompleted ? "check" : "square"}
+                          size={20}
+                          color={isCompleted ? "#FFFFFF" : theme.primary}
+                        />
+                        <ThemedText
+                          type="body"
+                          style={{
+                            color: isCompleted ? "#FFFFFF" : theme.primary,
+                            marginLeft: Spacing.sm,
+                            fontWeight: "600",
+                          }}
+                        >
+                          {isCompleted ? "Completed" : "Mark Complete"}
+                        </ThemedText>
+                      </Pressable>
+                      <View style={styles.coinReward}>
+                        <Image source={carbonCoinImage} style={styles.coinIcon} />
+                        <ThemedText type="body" style={{ fontWeight: "700", color: "#FFD700" }}>
+                          +{coinReward}
+                        </ThemedText>
+                      </View>
+                    </View>
                   </View>
-
-                  <ThemedText type="h3" style={styles.modalChallengeTitle}>
-                    {challenge.title}
-                  </ThemedText>
-
-                  <ThemedText type="body" style={[styles.modalChallengeDescription, { color: theme.neutral }]}>
-                    {challenge.description}
-                  </ThemedText>
-
-                  <View style={styles.taskBox}>
-                    <Feather name="check-circle" size={16} color={BrandColors.cyan} />
-                    <ThemedText type="body" style={[styles.taskText, { color: theme.text }]}>
-                      {challenge.daily_task}
-                    </ThemedText>
-                  </View>
-
-                  <View style={styles.impactBox}>
-                    <Feather name="trending-down" size={14} color="#10B981" />
-                    <ThemedText type="small" style={{ color: "#10B981", marginLeft: Spacing.xs }}>
-                      {challenge.estimated_impact}
-                    </ThemedText>
-                  </View>
-                </View>
-              ))}
+                );
+              })}
             </ScrollView>
 
             <View style={styles.modalFooter}>
@@ -361,6 +426,12 @@ export default function ChallengesScreen() {
         <ThemedText type="small" style={{ color: theme.neutral, marginTop: Spacing.sm }}>
           Choose your daily challenge level
         </ThemedText>
+        <View style={styles.coinCounter}>
+          <Image source={carbonCoinImage} style={styles.headerCoinIcon} />
+          <ThemedText type="h3" style={{ color: "#FFD700", fontWeight: "700" }}>
+            {carbonCoins}
+          </ThemedText>
+        </View>
       </View>
 
       <Spacer height={Spacing.xl} />
@@ -445,6 +516,20 @@ const styles = StyleSheet.create({
   header: {
     alignItems: "center",
     paddingTop: Spacing.lg,
+  },
+  coinCounter: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.sm,
+    marginTop: Spacing.md,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.sm,
+    backgroundColor: "rgba(255, 215, 0, 0.15)",
+    borderRadius: BorderRadius.full,
+  },
+  headerCoinIcon: {
+    width: 28,
+    height: 28,
   },
   toggleContainer: {
     flexDirection: "row",
@@ -605,6 +690,39 @@ const styles = StyleSheet.create({
   impactBox: {
     flexDirection: "row",
     alignItems: "center",
+  },
+  completeSection: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginTop: Spacing.lg,
+    paddingTop: Spacing.md,
+    borderTopWidth: 1,
+    borderTopColor: "rgba(128, 128, 128, 0.2)",
+  },
+  completeButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.md,
+    borderRadius: BorderRadius.md,
+    borderWidth: 1,
+  },
+  coinReward: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.xs,
+  },
+  coinIcon: {
+    width: 24,
+    height: 24,
+  },
+  completedCard: {
+    opacity: 0.8,
+  },
+  completedText: {
+    textDecorationLine: "line-through",
+    opacity: 0.7,
   },
   modalFooter: {
     marginTop: Spacing.lg,

@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, View, Image, Switch, Pressable } from "react-native";
+import { StyleSheet, View, Image, Switch, Pressable, Platform, Alert } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { ThemedText } from "@/components/ThemedText";
 import { Card } from "@/components/Card";
 import { ScreenScrollView } from "@/components/ScreenScrollView";
 import Spacer from "@/components/Spacer";
-import { Spacing, BorderRadius } from "@/constants/theme";
+import { Spacing, BorderRadius, BrandColors } from "@/constants/theme";
 import { useTheme } from "@/hooks/useTheme";
 import { useApp } from "@/contexts/AppContext";
 import {
@@ -20,6 +20,8 @@ import {
   sendTestNotification,
 } from "@/utils/notifications";
 
+const carbonCoinImage = require("@/assets/images/carboncoin.png");
+
 const AVATARS = {
   leaf: require("@/assets/avatars/leaf.png"),
   tree: require("@/assets/avatars/tree.png"),
@@ -28,7 +30,7 @@ const AVATARS = {
 
 export default function ProfileScreen() {
   const { theme } = useTheme();
-  const { userProfile } = useApp();
+  const { userProfile, carbonCoins, completedChallenges } = useApp();
   const navigation = useNavigation();
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
   const [isTogglingNotification, setIsTogglingNotification] = useState(false);
@@ -78,9 +80,15 @@ export default function ProfileScreen() {
 
   const handleTestNotification = async () => {
     try {
-      await sendTestNotification();
+      const result = await sendTestNotification();
+      if (result.success) {
+        Alert.alert("Daily Encouragement", result.message);
+      } else {
+        Alert.alert("Notification Error", result.message);
+      }
     } catch (error) {
       console.error("Error sending test notification:", error);
+      Alert.alert("Notification Error", "Could not send notification. Please check your notification permissions.");
     }
   };
 
@@ -159,6 +167,41 @@ export default function ProfileScreen() {
             </Pressable>
           </>
         ) : null}
+      </Card>
+
+      <Spacer height={Spacing["2xl"]} />
+
+      <ThemedText type="h3" style={styles.sectionTitle}>
+        Carbon Coins
+      </ThemedText>
+      <Spacer height={Spacing.md} />
+      <Card elevation={1} style={styles.card}>
+        <View style={styles.coinTrackerContainer}>
+          <View style={styles.coinIconContainer}>
+            <Image source={carbonCoinImage} style={styles.coinImage} />
+          </View>
+          <View style={styles.coinInfo}>
+            <ThemedText type="h2" style={styles.coinCount}>
+              {carbonCoins}
+            </ThemedText>
+            <ThemedText type="small" style={{ color: theme.neutral }}>
+              Carbon Coins Earned
+            </ThemedText>
+          </View>
+        </View>
+        <Spacer height={Spacing.md} />
+        <View style={styles.coinStatsRow}>
+          <View style={styles.coinStat}>
+            <Feather name="check-circle" size={16} color={BrandColors.cyan} />
+            <ThemedText type="small" style={{ color: theme.neutral, marginLeft: Spacing.xs }}>
+              {completedChallenges.length} challenges completed
+            </ThemedText>
+          </View>
+        </View>
+        <Spacer height={Spacing.sm} />
+        <ThemedText type="small" style={{ color: theme.neutral, lineHeight: 18 }}>
+          Earn coins by completing eco-challenges: Easy = 1, Medium = 2, Hard = 3 coins
+        </ThemedText>
       </Card>
 
       <Spacer height={Spacing["2xl"]} />
@@ -294,5 +337,37 @@ const styles = StyleSheet.create({
   },
   actionDescription: {
     marginTop: Spacing.md,
+  },
+  coinTrackerContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  coinIconContainer: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: "rgba(255, 215, 0, 0.15)",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  coinImage: {
+    width: 40,
+    height: 40,
+  },
+  coinInfo: {
+    marginLeft: Spacing.lg,
+    flex: 1,
+  },
+  coinCount: {
+    color: "#FFD700",
+    fontWeight: "700",
+  },
+  coinStatsRow: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  coinStat: {
+    flexDirection: "row",
+    alignItems: "center",
   },
 });

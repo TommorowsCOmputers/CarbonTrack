@@ -191,7 +191,25 @@ npx expo run:android  # or run:ios
 **Navigation:**
 - Accessible via "Challenges" tab in bottom navigation
 - Icon: calendar (Feather icon)
-- No state changes or interaction with carbon calculator (read-only feature)
+
+### Carbon Coin Reward System
+**Feature Overview:**
+- Users earn Carbon Coins by completing eco-challenges
+- Coin rewards based on difficulty: Easy = 1 coin, Medium = 2 coins, Hard = 3 coins
+- Visual coin counter displayed in Challenges screen header
+- Carbon Coin tracker in Profile screen showing total coins and completed challenges
+- Haptic feedback when completing challenges on mobile devices
+
+**Implementation:**
+- `contexts/AppContext.tsx`: Manages carbonCoins and completedChallenges state
+- `utils/storage.ts`: AsyncStorage persistence for coins and completed challenges
+- `screens/ChallengesScreen.tsx`: Checkboxes on challenge modal cards with coin reward display
+- `screens/ProfileScreen.tsx`: Carbon Coin tracker section below Settings
+- `assets/images/carboncoin.png`: Custom carbon coin logo
+
+**Data Storage:**
+- `@carbon_tracker:carbon_coins`: Total accumulated carbon coins (number)
+- `@carbon_tracker:completed_challenges`: Array of completed challenge IDs (string[])
 
 ### Notable Exclusions
 - No backend server or API

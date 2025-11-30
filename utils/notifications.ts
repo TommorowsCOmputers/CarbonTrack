@@ -86,21 +86,35 @@ export async function getScheduledNotifications() {
   return await Notifications.getAllScheduledNotificationsAsync();
 }
 
-export async function sendTestNotification(): Promise<void> {
+export async function sendTestNotification(): Promise<{ success: boolean; message: string }> {
+  if (Platform.OS === "web") {
+    const randomMessage =
+      MOTIVATIONAL_MESSAGES[Math.floor(Math.random() * MOTIVATIONAL_MESSAGES.length)];
+    return { 
+      success: true, 
+      message: `Your daily encouragement: "${randomMessage}"\n\nNote: Full notifications work best on mobile devices with Expo Go.`
+    };
+  }
+
   const hasPermission = await requestNotificationPermissions();
   if (!hasPermission) {
-    return;
+    return { success: false, message: "Notification permission not granted. Please enable notifications in your device settings." };
   }
 
   const randomMessage =
     MOTIVATIONAL_MESSAGES[Math.floor(Math.random() * MOTIVATIONAL_MESSAGES.length)];
 
-  await Notifications.scheduleNotificationAsync({
-    content: {
-      title: "Javenly CarbonTrack",
-      body: randomMessage,
-      sound: true,
-    },
-    trigger: null,
-  });
+  try {
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title: "Javenly CarbonTrack",
+        body: randomMessage,
+        sound: true,
+      },
+      trigger: null,
+    });
+    return { success: true, message: "Notification sent!" };
+  } catch (error) {
+    return { success: false, message: "Could not send notification. Try again on a mobile device." };
+  }
 }
