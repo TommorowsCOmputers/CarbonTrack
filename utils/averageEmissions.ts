@@ -9,7 +9,8 @@ export const averageEmissionsPerPerson = {
   airTravel: 0.4,
 };
 
-export const TOTAL_AVERAGE_PER_PERSON = 6.0; // metric tons CO2e/year per person
+export const TOTAL_AVERAGE_PER_PERSON = 6.0; // metric tons CO2e/year per person (current global average)
+export const TARGET_EMISSIONS_2050 = 2.0; // metric tons CO2e/year per person (2050 climate target)
 
 export function isAboveAverage(totalEmissions: number, occupants: number): boolean {
   const perPersonEmissions = totalEmissions / occupants;
