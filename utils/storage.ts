@@ -97,6 +97,7 @@ export async function clearSurveyData(): Promise<void> {
     await AsyncStorage.multiRemove([
       KEYS.SURVEY_DATA,
       KEYS.COMPLETED_ACTIONS,
+      KEYS.ACTIVE_DEVICES,
     ]);
   } catch (error) {
     console.error("Error clearing survey data:", error);
