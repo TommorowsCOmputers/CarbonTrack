@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, StyleSheet, Pressable } from "react-native";
+import { View, StyleSheet, Pressable, Modal, ScrollView } from "react-native";
 import { ThemedText } from "@/components/ThemedText";
 import { ScreenScrollView } from "@/components/ScreenScrollView";
 import { Button } from "@/components/Button";
@@ -8,11 +8,11 @@ import { Spacing, BorderRadius, CategoryColors, DifficultyColors, BrandColors } 
 import { useTheme } from "@/hooks/useTheme";
 import { Feather } from "@expo/vector-icons";
 import {
-  ecoChallenges,
-  getChallengeForDate,
+  getChallengeDaySet,
   getChallengesForMonth,
   getChallengesForWeek,
   type EcoChallenge,
+  type ChallengeDaySet,
 } from "@/utils/ecoChallenges";
 
 type ViewMode = "month" | "week";
@@ -21,7 +21,8 @@ export default function ChallengesScreen() {
   const { theme, isDark } = useTheme();
   const [viewMode, setViewMode] = useState<ViewMode>("month");
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [selectedChallenge, setSelectedChallenge] = useState<EcoChallenge | null>(null);
+  const [selectedDaySet, setSelectedDaySet] = useState<ChallengeDaySet | null>(null);
+  const [showModal, setShowModal] = useState(false);
 
   const currentYear = selectedDate.getFullYear();
   const currentMonth = selectedDate.getMonth();
@@ -76,6 +77,11 @@ export default function ChallengesScreen() {
     return result;
   };
 
+  const handleDayPress = (challengeSet: ChallengeDaySet) => {
+    setSelectedDaySet(challengeSet);
+    setShowModal(true);
+  };
+
   const renderMonthView = () => {
     const challenges = getChallengesForMonth(currentYear, currentMonth);
     const firstDay = new Date(currentYear, currentMonth, 1);
@@ -121,7 +127,7 @@ export default function ChallengesScreen() {
               }
 
               const date = new Date(currentYear, currentMonth, day);
-              const challenge = challenges.get(day);
+              const challengeSet = challenges.get(day);
               const isCurrentDay = isToday(date);
 
               return (
@@ -140,8 +146,8 @@ export default function ChallengesScreen() {
                     },
                   ]}
                   onPress={() => {
-                    if (challenge) {
-                      setSelectedChallenge(challenge);
+                    if (challengeSet) {
+                      handleDayPress(challengeSet);
                     }
                   }}
                 >
@@ -154,15 +160,12 @@ export default function ChallengesScreen() {
                   >
                     {day}
                   </ThemedText>
-                  {challenge && (
-                    <View
-                      style={[
-                        styles.challengeDot,
-                        {
-                          backgroundColor: CategoryColors[challenge.category],
-                        },
-                      ]}
-                    />
+                  {challengeSet && (
+                    <View style={styles.difficultyIndicators}>
+                      <View style={[styles.miniDot, { backgroundColor: DifficultyColors.easy }]} />
+                      <View style={[styles.miniDot, { backgroundColor: DifficultyColors.medium }]} />
+                      <View style={[styles.miniDot, { backgroundColor: DifficultyColors.hard }]} />
+                    </View>
                   )}
                 </Pressable>
               );
@@ -175,32 +178,18 @@ export default function ChallengesScreen() {
 
   const renderWeekView = () => {
     const startOfWeek = getStartOfWeek(selectedDate);
-    const challenges = getChallengesForWeek(startOfWeek);
+    const challengeSets = getChallengesForWeek(startOfWeek);
 
     return (
       <View>
-        {challenges.map((challenge, index) => {
+        {challengeSets.map((challengeSet, index) => {
           const date = new Date(startOfWeek);
           date.setDate(startOfWeek.getDate() + index);
           const isCurrentDay = isToday(date);
 
           return (
-            <Pressable
-              key={index}
-              style={[
-                styles.weekChallengeCard,
-                {
-                  backgroundColor: isDark ? theme.card + "80" : theme.card,
-                  borderLeftColor: CategoryColors[challenge.category],
-                },
-                isCurrentDay && {
-                  borderWidth: 2,
-                  borderColor: BrandColors.cyan,
-                },
-              ]}
-              onPress={() => setSelectedChallenge(challenge)}
-            >
-              <View style={styles.weekChallengeHeader}>
+            <View key={index} style={{ marginBottom: Spacing.md }}>
+              <View style={styles.weekDayHeader}>
                 <ThemedText
                   type="body"
                   style={[
@@ -210,160 +199,180 @@ export default function ChallengesScreen() {
                 >
                   {dayNames[date.getDay()]} {date.getDate()}
                 </ThemedText>
-                <View
+              </View>
+              <View style={styles.challengeOptionsRow}>
+                {/* Easy Challenge */}
+                <Pressable
                   style={[
-                    styles.difficultyBadge,
-                    { backgroundColor: DifficultyColors[challenge.difficulty] + "30" },
+                    styles.challengeOption,
+                    {
+                      backgroundColor: isDark ? theme.card + "80" : theme.card,
+                      borderLeftColor: DifficultyColors.easy,
+                    },
                   ]}
+                  onPress={() => handleDayPress(challengeSet)}
                 >
-                  <ThemedText
-                    type="small"
-                    style={[
-                      styles.difficultyText,
-                      { color: DifficultyColors[challenge.difficulty] },
-                    ]}
-                  >
-                    {challenge.difficulty}
+                  <View style={[styles.difficultyBadge, { backgroundColor: DifficultyColors.easy + "30" }]}>
+                    <ThemedText type="small" style={{ color: DifficultyColors.easy, fontSize: 10 }}>
+                      Easy
+                    </ThemedText>
+                  </View>
+                  <ThemedText type="small" numberOfLines={2} style={styles.optionTitle}>
+                    {challengeSet.easy.title}
                   </ThemedText>
-                </View>
-              </View>
-              <ThemedText type="h3" style={styles.weekChallengeTitle}>
-                {challenge.title}
-              </ThemedText>
-              <ThemedText type="small" style={[styles.weekChallengeTask, { color: theme.neutral }]}>
-                {challenge.daily_task}
-              </ThemedText>
-              <View style={styles.weekChallengeFooter}>
-                <View style={styles.categoryBadge}>
-                  <View
-                    style={[
-                      styles.categoryDot,
-                      { backgroundColor: CategoryColors[challenge.category] },
-                    ]}
-                  />
-                  <ThemedText type="small" style={{ color: theme.neutral }}>
-                    {challenge.category}
+                </Pressable>
+
+                {/* Medium Challenge */}
+                <Pressable
+                  style={[
+                    styles.challengeOption,
+                    {
+                      backgroundColor: isDark ? theme.card + "80" : theme.card,
+                      borderLeftColor: DifficultyColors.medium,
+                    },
+                  ]}
+                  onPress={() => handleDayPress(challengeSet)}
+                >
+                  <View style={[styles.difficultyBadge, { backgroundColor: DifficultyColors.medium + "30" }]}>
+                    <ThemedText type="small" style={{ color: DifficultyColors.medium, fontSize: 10 }}>
+                      Medium
+                    </ThemedText>
+                  </View>
+                  <ThemedText type="small" numberOfLines={2} style={styles.optionTitle}>
+                    {challengeSet.medium.title}
                   </ThemedText>
-                </View>
-                <ThemedText type="small" style={[styles.impact, { color: BrandColors.green }]}>
-                  {challenge.estimated_impact}
-                </ThemedText>
+                </Pressable>
+
+                {/* Hard Challenge */}
+                <Pressable
+                  style={[
+                    styles.challengeOption,
+                    {
+                      backgroundColor: isDark ? theme.card + "80" : theme.card,
+                      borderLeftColor: DifficultyColors.hard,
+                    },
+                  ]}
+                  onPress={() => handleDayPress(challengeSet)}
+                >
+                  <View style={[styles.difficultyBadge, { backgroundColor: DifficultyColors.hard + "30" }]}>
+                    <ThemedText type="small" style={{ color: DifficultyColors.hard, fontSize: 10 }}>
+                      Hard
+                    </ThemedText>
+                  </View>
+                  <ThemedText type="small" numberOfLines={2} style={styles.optionTitle}>
+                    {challengeSet.hard.title}
+                  </ThemedText>
+                </Pressable>
               </View>
-            </Pressable>
+            </View>
           );
         })}
       </View>
     );
   };
 
-  const renderChallengeDetail = () => {
-    if (!selectedChallenge) return null;
+  const renderChallengeModal = () => {
+    if (!selectedDaySet) return null;
+
+    const challenges = [selectedDaySet.easy, selectedDaySet.medium, selectedDaySet.hard];
 
     return (
-      <View
-        style={[
-          styles.detailModal,
-          {
-            backgroundColor: isDark ? theme.background : theme.card,
-          },
-        ]}
+      <Modal
+        visible={showModal}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={() => setShowModal(false)}
       >
-        <View style={styles.detailHeader}>
-          <ThemedText type="h2">{selectedChallenge.title}</ThemedText>
-          <Pressable onPress={() => setSelectedChallenge(null)}>
-            <Feather name="x" size={24} color={theme.text} />
-          </Pressable>
-        </View>
+        <View style={styles.modalOverlay}>
+          <View style={[styles.modalContent, { backgroundColor: theme.backgroundRoot }]}>
+            <View style={styles.modalHeader}>
+              <ThemedText type="h2">Choose Your Challenge</ThemedText>
+              <Pressable onPress={() => setShowModal(false)} style={styles.closeButton}>
+                <Feather name="x" size={24} color={theme.text} />
+              </Pressable>
+            </View>
 
-        <Spacer height={Spacing.lg} />
+            <ScrollView style={styles.modalScroll}>
+              {challenges.map((challenge, index) => (
+                <View
+                  key={challenge.id}
+                  style={[
+                    styles.modalChallengeCard,
+                    {
+                      backgroundColor: isDark ? theme.card + "80" : theme.card,
+                      borderLeftColor: DifficultyColors[challenge.difficulty],
+                    },
+                  ]}
+                >
+                  <View style={styles.modalChallengeHeader}>
+                    <View style={[styles.difficultyBadge, { backgroundColor: DifficultyColors[challenge.difficulty] + "30" }]}>
+                      <ThemedText type="small" style={{ color: DifficultyColors[challenge.difficulty], textTransform: "capitalize" }}>
+                        {challenge.difficulty}
+                      </ThemedText>
+                    </View>
+                    <View style={styles.categoryBadge}>
+                      <View style={[styles.categoryDot, { backgroundColor: CategoryColors[challenge.category] }]} />
+                      <ThemedText type="small" style={{ color: theme.neutral, textTransform: "capitalize" }}>
+                        {challenge.category}
+                      </ThemedText>
+                    </View>
+                  </View>
 
-        <View style={styles.detailBadges}>
-          <View
-            style={[
-              styles.badge,
-              { backgroundColor: CategoryColors[selectedChallenge.category] + "30" },
-            ]}
-          >
-            <ThemedText
-              type="small"
-              style={[
-                styles.badgeText,
-                { color: CategoryColors[selectedChallenge.category] },
-              ]}
-            >
-              {selectedChallenge.category}
-            </ThemedText>
+                  <ThemedText type="h3" style={styles.modalChallengeTitle}>
+                    {challenge.title}
+                  </ThemedText>
+
+                  <ThemedText type="body" style={[styles.modalChallengeDescription, { color: theme.neutral }]}>
+                    {challenge.description}
+                  </ThemedText>
+
+                  <View style={styles.taskBox}>
+                    <Feather name="check-circle" size={16} color={BrandColors.cyan} />
+                    <ThemedText type="body" style={[styles.taskText, { color: theme.text }]}>
+                      {challenge.daily_task}
+                    </ThemedText>
+                  </View>
+
+                  <View style={styles.impactBox}>
+                    <Feather name="trending-down" size={14} color="#10B981" />
+                    <ThemedText type="small" style={{ color: "#10B981", marginLeft: Spacing.xs }}>
+                      {challenge.estimated_impact}
+                    </ThemedText>
+                  </View>
+                </View>
+              ))}
+            </ScrollView>
+
+            <View style={styles.modalFooter}>
+              <Button onPress={() => setShowModal(false)}>
+                <ThemedText type="body" style={{ color: "#FFFFFF" }}>Close</ThemedText>
+              </Button>
+            </View>
           </View>
-          <View
-            style={[
-              styles.badge,
-              { backgroundColor: DifficultyColors[selectedChallenge.difficulty] + "30" },
-            ]}
-          >
-            <ThemedText
-              type="small"
-              style={[
-                styles.badgeText,
-                { color: DifficultyColors[selectedChallenge.difficulty] },
-              ]}
-            >
-              {selectedChallenge.difficulty}
-            </ThemedText>
-          </View>
         </View>
-
-        <Spacer height={Spacing.xl} />
-
-        <ThemedText type="body" style={styles.description}>
-          {selectedChallenge.description}
-        </ThemedText>
-
-        <Spacer height={Spacing.xl} />
-
-        <View style={[styles.taskBox, { backgroundColor: theme.card + "80" }]}>
-          <ThemedText type="body" style={styles.taskLabel}>
-            Today's Task:
-          </ThemedText>
-          <Spacer height={Spacing.sm} />
-          <ThemedText type="h3">{selectedChallenge.daily_task}</ThemedText>
-        </View>
-
-        <Spacer height={Spacing.xl} />
-
-        <View style={styles.impactRow}>
-          <Feather name="trending-down" size={20} color={BrandColors.green} />
-          <ThemedText type="body" style={[styles.impactText, { color: BrandColors.green }]}>
-            {selectedChallenge.estimated_impact}
-          </ThemedText>
-        </View>
-
-        <Spacer height={Spacing["2xl"]} />
-
-        <Button onPress={() => setSelectedChallenge(null)}>Close</Button>
-      </View>
+      </Modal>
     );
   };
 
   return (
-    <ScreenScrollView contentContainerStyle={styles.container}>
+    <ScreenScrollView>
       <View style={styles.header}>
         <ThemedText type="h1">Eco Challenges</ThemedText>
-        <ThemedText type="body" style={[styles.subtitle, { color: theme.neutral }]}>
-          Daily actions for a sustainable future
+        <ThemedText type="small" style={{ color: theme.neutral, marginTop: Spacing.sm }}>
+          Choose your daily challenge level
         </ThemedText>
       </View>
 
       <Spacer height={Spacing.xl} />
 
-      <View style={styles.viewToggle}>
+      <View style={styles.toggleContainer}>
         <Pressable
           style={[
             styles.toggleButton,
             viewMode === "month" && [
               styles.toggleButtonActive,
-              { backgroundColor: BrandColors.cyan },
+              { backgroundColor: theme.primary },
             ],
-            { backgroundColor: theme.card },
           ]}
           onPress={() => setViewMode("month")}
         >
@@ -382,9 +391,8 @@ export default function ChallengesScreen() {
             styles.toggleButton,
             viewMode === "week" && [
               styles.toggleButtonActive,
-              { backgroundColor: BrandColors.cyan },
+              { backgroundColor: theme.primary },
             ],
-            { backgroundColor: theme.card },
           ]}
           onPress={() => setViewMode("week")}
         >
@@ -400,82 +408,54 @@ export default function ChallengesScreen() {
         </Pressable>
       </View>
 
-      <Spacer height={Spacing.xl} />
+      <Spacer height={Spacing.lg} />
 
       <View style={styles.navigation}>
         <Pressable
-          onPress={viewMode === "month" ? goToPreviousMonth : goToPreviousWeek}
           style={styles.navButton}
+          onPress={viewMode === "month" ? goToPreviousMonth : goToPreviousWeek}
         >
           <Feather name="chevron-left" size={24} color={theme.text} />
         </Pressable>
-
         <ThemedText type="h3">
           {viewMode === "month"
             ? `${monthNames[currentMonth]} ${currentYear}`
             : `Week of ${monthNames[getStartOfWeek(selectedDate).getMonth()]} ${getStartOfWeek(selectedDate).getDate()}`}
         </ThemedText>
-
         <Pressable
-          onPress={viewMode === "month" ? goToNextMonth : goToNextWeek}
           style={styles.navButton}
+          onPress={viewMode === "month" ? goToNextMonth : goToNextWeek}
         >
           <Feather name="chevron-right" size={24} color={theme.text} />
         </Pressable>
       </View>
 
-      <Spacer height={Spacing.xl} />
+      <Spacer height={Spacing.lg} />
 
       {viewMode === "month" ? renderMonthView() : renderWeekView()}
 
-      {selectedChallenge && (
-        <>
-          <Spacer height={Spacing["2xl"]} />
-          {renderChallengeDetail()}
-        </>
-      )}
-
-      <Spacer height={Spacing["4xl"]} />
-
-      <View style={[styles.legend, { backgroundColor: theme.card }]}>
-        <ThemedText type="body" style={styles.legendTitle}>
-          Categories:
-        </ThemedText>
-        <Spacer height={Spacing.md} />
-        <View style={styles.legendGrid}>
-          {Object.entries(CategoryColors).map(([category, color]) => (
-            <View key={category} style={styles.legendItem}>
-              <View style={[styles.legendDot, { backgroundColor: color }]} />
-              <ThemedText type="small">{category}</ThemedText>
-            </View>
-          ))}
-        </View>
-      </View>
-
       <Spacer height={Spacing["2xl"]} />
+
+      {renderChallengeModal()}
     </ScreenScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    paddingHorizontal: Spacing.xl,
-  },
   header: {
     alignItems: "center",
+    paddingTop: Spacing.lg,
   },
-  subtitle: {
-    textAlign: "center",
-    marginTop: Spacing.sm,
-  },
-  viewToggle: {
+  toggleContainer: {
     flexDirection: "row",
+    justifyContent: "center",
     gap: Spacing.md,
   },
   toggleButton: {
-    flex: 1,
+    paddingHorizontal: Spacing.xl,
     paddingVertical: Spacing.md,
     borderRadius: BorderRadius.md,
+    minWidth: 100,
     alignItems: "center",
   },
   toggleButtonActive: {},
@@ -486,25 +466,27 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    paddingHorizontal: Spacing.md,
   },
   navButton: {
     padding: Spacing.sm,
   },
   dayHeaders: {
     flexDirection: "row",
-    marginBottom: Spacing.md,
+    marginBottom: Spacing.sm,
   },
   dayHeader: {
     flex: 1,
     alignItems: "center",
+    paddingVertical: Spacing.sm,
   },
   dayHeaderText: {
     fontWeight: "600",
   },
   weekRow: {
     flexDirection: "row",
-    marginBottom: Spacing.sm,
     gap: Spacing.xs,
+    marginBottom: Spacing.xs,
   },
   dayCell: {
     flex: 1,
@@ -512,42 +494,83 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.sm,
     padding: Spacing.xs,
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "space-between",
   },
   dayNumber: {
-    fontWeight: "600",
+    fontWeight: "500",
   },
-  challengeDot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    marginTop: Spacing.xs,
-  },
-  weekChallengeCard: {
-    padding: Spacing.lg,
-    borderRadius: BorderRadius.md,
-    marginBottom: Spacing.md,
-    borderLeftWidth: 4,
-  },
-  weekChallengeHeader: {
+  difficultyIndicators: {
     flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    gap: 2,
+  },
+  miniDot: {
+    width: 4,
+    height: 4,
+    borderRadius: 2,
+  },
+  weekDayHeader: {
     marginBottom: Spacing.sm,
   },
   weekDay: {
     fontWeight: "600",
   },
-  weekChallengeTitle: {
-    marginBottom: Spacing.sm,
+  challengeOptionsRow: {
+    flexDirection: "row",
+    gap: Spacing.sm,
   },
-  weekChallengeTask: {
-    marginBottom: Spacing.md,
+  challengeOption: {
+    flex: 1,
+    borderLeftWidth: 3,
+    borderRadius: BorderRadius.md,
+    padding: Spacing.sm,
+    minHeight: 80,
   },
-  weekChallengeFooter: {
+  optionTitle: {
+    marginTop: Spacing.xs,
+    lineHeight: 16,
+  },
+  difficultyBadge: {
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: 2,
+    borderRadius: BorderRadius.sm,
+    alignSelf: "flex-start",
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "flex-end",
+  },
+  modalContent: {
+    borderTopLeftRadius: BorderRadius.xl,
+    borderTopRightRadius: BorderRadius.xl,
+    paddingTop: Spacing.xl,
+    paddingHorizontal: Spacing.lg,
+    paddingBottom: Spacing.xl,
+    maxHeight: "90%",
+  },
+  modalHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    marginBottom: Spacing.lg,
+  },
+  closeButton: {
+    padding: Spacing.sm,
+  },
+  modalScroll: {
+    flex: 1,
+  },
+  modalChallengeCard: {
+    borderLeftWidth: 4,
+    borderRadius: BorderRadius.md,
+    padding: Spacing.lg,
+    marginBottom: Spacing.md,
+  },
+  modalChallengeHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: Spacing.md,
   },
   categoryBadge: {
     flexDirection: "row",
@@ -559,80 +582,31 @@ const styles = StyleSheet.create({
     height: 8,
     borderRadius: 4,
   },
-  impact: {
-    fontWeight: "600",
+  modalChallengeTitle: {
+    marginBottom: Spacing.sm,
   },
-  difficultyBadge: {
-    paddingHorizontal: Spacing.sm,
-    paddingVertical: Spacing.xs,
-    borderRadius: BorderRadius.sm,
-  },
-  difficultyText: {
-    fontWeight: "600",
-    fontSize: 11,
-    textTransform: "capitalize",
-  },
-  detailModal: {
-    padding: Spacing.xl,
-    borderRadius: BorderRadius.lg,
-  },
-  detailHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  detailBadges: {
-    flexDirection: "row",
-    gap: Spacing.md,
-  },
-  badge: {
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.sm,
-    borderRadius: BorderRadius.md,
-  },
-  badgeText: {
-    fontWeight: "600",
-    textTransform: "capitalize",
-  },
-  description: {
-    lineHeight: 24,
+  modalChallengeDescription: {
+    marginBottom: Spacing.md,
+    lineHeight: 20,
   },
   taskBox: {
-    padding: Spacing.lg,
-    borderRadius: BorderRadius.md,
-  },
-  taskLabel: {
-    fontWeight: "600",
-  },
-  impactRow: {
     flexDirection: "row",
-    alignItems: "center",
+    alignItems: "flex-start",
     gap: Spacing.sm,
+    marginBottom: Spacing.sm,
+    padding: Spacing.sm,
+    backgroundColor: BrandColors.cyan + "10",
+    borderRadius: BorderRadius.sm,
   },
-  impactText: {
+  taskText: {
+    flex: 1,
     fontWeight: "600",
   },
-  legend: {
-    padding: Spacing.lg,
-    borderRadius: BorderRadius.md,
-  },
-  legendTitle: {
-    fontWeight: "600",
-  },
-  legendGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: Spacing.md,
-  },
-  legendItem: {
+  impactBox: {
     flexDirection: "row",
     alignItems: "center",
-    gap: Spacing.xs,
-    width: "30%",
   },
-  legendDot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
+  modalFooter: {
+    marginTop: Spacing.lg,
   },
 });
