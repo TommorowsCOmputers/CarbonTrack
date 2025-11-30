@@ -195,6 +195,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       const updatedProfile = { ...userProfile, hasCompletedSurvey: false };
       await saveUserProfile(updatedProfile);
       await clearSurveyData();
+      await saveActiveDevices([]);
       setUserProfile(updatedProfile);
       setSurveyData(null);
       setFootprint(null);

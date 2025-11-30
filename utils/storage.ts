@@ -152,6 +152,8 @@ export async function clearAllData(): Promise<void> {
       KEYS.ACTIVE_DEVICES,
       KEYS.GOALS,
       KEYS.NOTIFICATIONS_ENABLED,
+      KEYS.CARBON_COINS,
+      KEYS.COMPLETED_CHALLENGES,
     ]);
   } catch (error) {
     console.error("Error clearing all data:", error);
