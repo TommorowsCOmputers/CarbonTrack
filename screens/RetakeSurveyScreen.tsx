@@ -65,7 +65,7 @@ export default function RetakeSurveyScreen() {
 
   const handleNext = () => {
     if (currentStep < TOTAL_STEPS) {
-      navigation.navigate("RetakeSurvey", { step: currentStep + 1 });
+      navigation.navigate("RetakeSurveyScreen", { step: currentStep + 1 });
     } else {
       completeSurvey(formData);
       navigation.getParent()?.navigate("HomeTab" as any);
@@ -74,7 +74,7 @@ export default function RetakeSurveyScreen() {
 
   const handleBack = () => {
     if (currentStep > 1) {
-      navigation.navigate("RetakeSurvey", { step: currentStep - 1 });
+      navigation.navigate("RetakeSurveyScreen", { step: currentStep - 1 });
     } else {
       navigation.goBack();
     }
