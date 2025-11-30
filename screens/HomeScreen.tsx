@@ -96,7 +96,7 @@ export default function HomeScreen() {
                         : "shopping-bag"
               }
               title={action.title}
-              impact={`-${action.estimatedReduction.toFixed(0)} kg CO2/year`}
+              impact={`-${(action.estimatedReduction / 1000).toFixed(2)} metric tons CO2/year`}
             />
           ))}
         </ScrollView>

@@ -49,6 +49,10 @@
         }
       ]
     ],
+    "react-native-google-mobile-ads": {
+      "android_app_id": "ca-app-pub-6040063651962532~7604127030",
+      "ios_app_id": "ca-app-pub-6040063651962532~5883851251"
+    },
     "experiments": {
       "reactCompiler": true
     },
@@ -57,11 +61,14 @@
       "ADMOB_BANNER_ANDROID": "ca-app-pub-6040063651962532/9512105076",
       "ADMOB_BANNER_ANDROID_BOTTOM_HOME": "ca-app-pub-6040063651962532/4044155973",
       "ADMOB_BANNER_IOS_BOTTOM_HOME": "ca-app-pub-6040063651962532/1999736129",
-
       "ADMOB_BANNER_ANDROID_EXTRA_1": "ca-app-pub-6040063651962532/1450987501",
       "ADMOB_BANNER_ANDROID_EXTRA_2": "ca-app-pub-6040063651962532/2808409006",
       "ADMOB_BANNER_IOS_EXTRA_1": "ca-app-pub-6040063651962532/4886125049",
-      "ADMOB_BANNER_IOS_EXTRA_2": "ca-app-pub-6040063651962532/3573043370"
-    }
+      "ADMOB_BANNER_IOS_EXTRA_2": "ca-app-pub-6040063651962532/3573043370",
+      "eas": {
+        "projectId": "b25a1691-a0fd-463d-9820-f3af32313dec"
+      }
+    },
+    "owner": "Javenly Innovations LLC"
   }
 }
