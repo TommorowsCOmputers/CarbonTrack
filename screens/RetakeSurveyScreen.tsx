@@ -138,7 +138,10 @@ export default function RetakeSurveyScreen() {
               ]}
               selected={formData.heatingSource}
               onSelect={(value) =>
-                updateField("heatingSource", value as SurveyData["heatingSource"])
+                updateField(
+                  "heatingSource",
+                  value as SurveyData["heatingSource"],
+                )
               }
             />
             <Spacer height={Spacing.lg} />
@@ -146,7 +149,10 @@ export default function RetakeSurveyScreen() {
             <Spacer height={Spacing.md} />
             <RadioGroup
               options={[
-                { label: "Low (Efficient appliances, mindful usage)", value: "low" },
+                {
+                  label: "Low (Efficient appliances, mindful usage)",
+                  value: "low",
+                },
                 { label: "Average (Standard usage)", value: "average" },
                 { label: "High (Many appliances, AC/heat)", value: "high" },
               ]}
@@ -213,8 +219,14 @@ export default function RetakeSurveyScreen() {
             <Spacer height={Spacing.xl} />
             <RadioGroup
               options={[
-                { label: "Meat Heavy (Daily meat consumption)", value: "meat-heavy" },
-                { label: "Average (Meat a few times per week)", value: "average" },
+                {
+                  label: "Meat Heavy (Daily meat consumption)",
+                  value: "meat-heavy",
+                },
+                {
+                  label: "Average (Meat a few times per week)",
+                  value: "average",
+                },
                 { label: "Vegetarian", value: "vegetarian" },
                 { label: "Vegan", value: "vegan" },
               ]}
@@ -235,9 +247,15 @@ export default function RetakeSurveyScreen() {
             <Spacer height={Spacing.xl} />
             <RadioGroup
               options={[
-                { label: "Minimal (Only essentials, buy used)", value: "minimal" },
+                {
+                  label: "Minimal (Only essentials, buy used)",
+                  value: "minimal",
+                },
                 { label: "Average (Regular shopping)", value: "average" },
-                { label: "Frequent (Regular new purchases)", value: "frequent" },
+                {
+                  label: "Frequent (Regular new purchases)",
+                  value: "frequent",
+                },
               ]}
               selected={formData.shoppingHabits}
               onSelect={(value) =>
@@ -259,7 +277,9 @@ export default function RetakeSurveyScreen() {
             <Spacer height={Spacing.xl} />
             <NumberInput
               value={formData.ledPercentage}
-              onChange={(value) => updateField("ledPercentage", Math.min(value, 100))}
+              onChange={(value) =>
+                updateField("ledPercentage", Math.min(value, 100))
+              }
               min={0}
               max={100}
               step={10}
@@ -303,7 +323,10 @@ export default function RetakeSurveyScreen() {
             <Spacer height={Spacing.xl} />
             <RadioGroup
               options={[
-                { label: "Low (Short showers, efficient fixtures)", value: "low" },
+                {
+                  label: "Low (Short showers, efficient fixtures)",
+                  value: "low",
+                },
                 { label: "Average (Regular usage)", value: "average" },
                 { label: "High (Long showers, frequent baths)", value: "high" },
               ]}
@@ -326,7 +349,10 @@ export default function RetakeSurveyScreen() {
               options={[
                 { label: "Minimal (Rarely recycle)", value: "minimal" },
                 { label: "Average (Recycle some items)", value: "average" },
-                { label: "Comprehensive (Recycle most items)", value: "comprehensive" },
+                {
+                  label: "Comprehensive (Recycle most items)",
+                  value: "comprehensive",
+                },
               ]}
               selected={formData.recyclingHabits}
               onSelect={(value) =>
