@@ -5,13 +5,14 @@
 Carbon Tracker is a React Native mobile application built with Expo that helps users understand and reduce their household carbon footprint. The app is designed as a single-user, local-first solution that stores all data on the device without requiring authentication. Users complete an onboarding survey to calculate their carbon emissions across multiple categories (heating, electricity, transportation, food, shopping, travel), then receive personalized recommendations and track their progress toward reducing their environmental impact.
 
 **Key Features:**
-- Multi-step onboarding survey to assess household carbon footprint
+- Multi-step onboarding survey to assess household carbon footprint (14 questions)
 - Real-time carbon footprint calculation with breakdowns by category
 - Personalized reduction recommendations based on survey responses
 - Carbon offset suggestions and educational content
 - Profile customization with nature-themed avatars
 - Survey retake capability to recalculate footprint
 - Device tracking for carbon-producing appliances
+- Pet carbon footprint tracking (0.545 metric tons per pet per year)
 - Goal setting and progress tracking
 - Eco-challenges calendar with 52 daily specific actionable tasks rotating by date
 

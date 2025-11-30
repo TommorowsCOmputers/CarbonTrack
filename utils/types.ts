@@ -39,6 +39,9 @@ export interface SurveyData {
   // ✅ new field for packaged/processed food consumption
   packagedFood: "minimal" | "average" | "high";
 
+  // ✅ new field for number of pets (0.545 tons CO2e per pet per year)
+  pets: number;
+
   devices?: Device[];
 }
 
@@ -62,6 +65,7 @@ export interface CarbonFootprint {
     food: number;
     shopping: number;
     travel: number;
+    pets: number;
   };
 }
 

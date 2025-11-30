@@ -19,7 +19,7 @@ type SurveyScreenProps = {
   route: RouteProp<RootStackParamList, "Survey">;
 };
 
-const TOTAL_STEPS = 13;
+const TOTAL_STEPS = 14;
 console.log(">>> SurveyScreen file loaded <<<");
 
 export default function SurveyScreen({ navigation, route }: SurveyScreenProps) {
@@ -43,6 +43,7 @@ export default function SurveyScreen({ navigation, route }: SurveyScreenProps) {
     shoppingHabits: "average",
     flightsPerYear: 2,
     packagedFood: "average",
+    pets: 0,
     devices: [],
   });
 
@@ -412,6 +413,30 @@ export default function SurveyScreen({ navigation, route }: SurveyScreenProps) {
         );
 
       case 13:
+        return (
+          <>
+            <ThemedText type="h2" style={styles.question}>
+              How many pets does your family have?
+            </ThemedText>
+            <Spacer height={Spacing.xl} />
+            <NumberInput
+              value={formData.pets}
+              onChange={(value) => updateField("pets", value)}
+              min={0}
+              max={20}
+              step={1}
+            />
+            <Spacer height={Spacing.md} />
+            <ThemedText
+              type="small"
+              style={[styles.hint, { color: theme.neutral }]}
+            >
+              Each pet produces about 0.545 metric tons of CO2e per year
+            </ThemedText>
+          </>
+        );
+
+      case 14:
         return (
           <>
             <ThemedText type="h2" style={styles.question}>

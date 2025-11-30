@@ -23,6 +23,7 @@ export function calculateCarbonFootprint(
     survey.occupants,
   );
   const packagedFoodImpact = calculatePackagedFood(survey); // household-level only
+  const petEmissions = calculatePets(survey);
 
   const totalKg =
     breakdown.heating +
@@ -32,7 +33,8 @@ export function calculateCarbonFootprint(
     breakdown.shopping +
     breakdown.travel +
     waterAndRecycling +
-    packagedFoodImpact;
+    packagedFoodImpact +
+    petEmissions;
 
   let totalKgAdjusted = totalKg;
 
@@ -62,6 +64,7 @@ export function calculateCarbonFootprint(
       food: (breakdown.food / 1000) * (1 - actionReduction),
       shopping: (breakdown.shopping / 1000) * (1 - actionReduction),
       travel: (breakdown.travel / 1000) * (1 - actionReduction),
+      pets: (petEmissions / 1000) * (1 - actionReduction),
     },
   };
 }
@@ -218,6 +221,11 @@ function calculatePackagedFood(survey: SurveyData): number {
   return (
     packagedFoodFactors[survey.packagedFood] || packagedFoodFactors.average
   );
+}
+
+function calculatePets(survey: SurveyData): number {
+  // 0.545 metric tons CO2e per pet per year = 545 kg per pet per year
+  return (survey.pets || 0) * 545;
 }
 
 export function generateRecommendations(
