@@ -76,7 +76,305 @@ export default function SurveyScreen({ navigation, route }: SurveyScreenProps) {
 
   const renderQuestion = () => {
     switch (currentStep) {
-      // cases 1–11 unchanged ...
+      case 1:
+        return (
+          <>
+            <ThemedText type="h2" style={styles.question}>
+              What size is your home?
+            </ThemedText>
+            <Spacer height={Spacing.xl} />
+            <RadioGroup
+              options={[
+                { label: "Small (< 1,000 sq ft)", value: "small" },
+                { label: "Medium (1,000 - 2,000 sq ft)", value: "medium" },
+                { label: "Large (2,000 - 3,000 sq ft)", value: "large" },
+                { label: "Very Large (> 3,000 sq ft)", value: "very-large" },
+              ]}
+              selected={formData.homeSize}
+              onSelect={(value) =>
+                updateField("homeSize", value as SurveyData["homeSize"])
+              }
+            />
+          </>
+        );
+
+      case 2:
+        return (
+          <>
+            <ThemedText type="h2" style={styles.question}>
+              How many people live in your home?
+            </ThemedText>
+            <Spacer height={Spacing.xl} />
+            <NumberInput
+              value={formData.occupants}
+              onChange={(value) => updateField("occupants", value)}
+              min={1}
+              max={10}
+              step={1}
+            />
+          </>
+        );
+
+      case 3:
+        return (
+          <>
+            <ThemedText type="h2" style={styles.question}>
+              What's your primary heating source?
+            </ThemedText>
+            <Spacer height={Spacing.xl} />
+            <RadioGroup
+              options={[
+                { label: "Natural Gas", value: "natural-gas" },
+                { label: "Electric Heat", value: "electric" },
+                { label: "Heating Oil", value: "oil" },
+                { label: "Propane", value: "propane" },
+                { label: "No Heating", value: "none" },
+              ]}
+              selected={formData.heatingSource}
+              onSelect={(value) =>
+                updateField(
+                  "heatingSource",
+                  value as SurveyData["heatingSource"],
+                )
+              }
+            />
+            <Spacer height={Spacing.lg} />
+            <ThemedText type="h3">Electricity Usage</ThemedText>
+            <Spacer height={Spacing.md} />
+            <RadioGroup
+              options={[
+                {
+                  label: "Low (Efficient appliances, mindful usage)",
+                  value: "low",
+                },
+                { label: "Average (Standard usage)", value: "average" },
+                { label: "High (Many appliances, AC/heat)", value: "high" },
+              ]}
+              selected={formData.electricityUsage}
+              onSelect={(value) =>
+                updateField(
+                  "electricityUsage",
+                  value as SurveyData["electricityUsage"],
+                )
+              }
+            />
+          </>
+        );
+
+      case 4:
+        return (
+          <>
+            <ThemedText type="h2" style={styles.question}>
+              Tell us about your vehicle
+            </ThemedText>
+            <Spacer height={Spacing.xl} />
+            <ThemedText type="body" style={styles.subQuestion}>
+              What type of vehicle do you primarily use?
+            </ThemedText>
+            <Spacer height={Spacing.md} />
+            <RadioGroup
+              options={[
+                { label: "Gasoline", value: "gas" },
+                { label: "Diesel", value: "diesel" },
+                { label: "Hybrid", value: "hybrid" },
+                { label: "Electric", value: "electric" },
+                { label: "No Vehicle", value: "none" },
+              ]}
+              selected={formData.vehicleType}
+              onSelect={(value) =>
+                updateField("vehicleType", value as SurveyData["vehicleType"])
+              }
+            />
+            {formData.vehicleType !== "none" && (
+              <>
+                <Spacer height={Spacing["2xl"]} />
+                <ThemedText type="body" style={styles.subQuestion}>
+                  How many miles do you drive per week?
+                </ThemedText>
+                <Spacer height={Spacing.md} />
+                <NumberInput
+                  value={formData.vehicleMiles}
+                  onChange={(value) => updateField("vehicleMiles", value)}
+                  min={0}
+                  max={500}
+                  step={10}
+                />
+              </>
+            )}
+          </>
+        );
+
+      case 5:
+        return (
+          <>
+            <ThemedText type="h2" style={styles.question}>
+              What best describes your diet?
+            </ThemedText>
+            <Spacer height={Spacing.xl} />
+            <RadioGroup
+              options={[
+                {
+                  label: "Meat Heavy (Daily meat consumption)",
+                  value: "meat-heavy",
+                },
+                {
+                  label: "Average (Meat a few times per week)",
+                  value: "average",
+                },
+                { label: "Vegetarian", value: "vegetarian" },
+                { label: "Vegan", value: "vegan" },
+              ]}
+              selected={formData.dietType}
+              onSelect={(value) =>
+                updateField("dietType", value as SurveyData["dietType"])
+              }
+            />
+          </>
+        );
+
+      case 6:
+        return (
+          <>
+            <ThemedText type="h2" style={styles.question}>
+              How would you describe your shopping habits?
+            </ThemedText>
+            <Spacer height={Spacing.xl} />
+            <RadioGroup
+              options={[
+                {
+                  label: "Minimal (Only essentials, buy used)",
+                  value: "minimal",
+                },
+                { label: "Average (Regular shopping)", value: "average" },
+                {
+                  label: "Frequent (Regular new purchases)",
+                  value: "frequent",
+                },
+              ]}
+              selected={formData.shoppingHabits}
+              onSelect={(value) =>
+                updateField(
+                  "shoppingHabits",
+                  value as SurveyData["shoppingHabits"],
+                )
+              }
+            />
+          </>
+        );
+
+      case 7:
+        return (
+          <>
+            <ThemedText type="h2" style={styles.question}>
+              What percentage of your home uses LED lights?
+            </ThemedText>
+            <Spacer height={Spacing.xl} />
+            <NumberInput
+              value={formData.ledPercentage}
+              onChange={(value) =>
+                updateField("ledPercentage", Math.min(value, 100))
+              }
+              min={0}
+              max={100}
+              step={10}
+            />
+            <Spacer height={Spacing.md} />
+            <ThemedText
+              type="small"
+              style={[styles.hint, { color: theme.neutral }]}
+            >
+              LED lights use about 75% less energy than incandescent bulbs
+            </ThemedText>
+          </>
+        );
+
+      case 8:
+        return (
+          <>
+            <ThemedText type="h2" style={styles.question}>
+              Do you use renewable energy?
+            </ThemedText>
+            <Spacer height={Spacing.xl} />
+            <RadioGroup
+              options={[
+                { label: "Yes (Solar, wind, or renewable plan)", value: "yes" },
+                { label: "No", value: "no" },
+              ]}
+              selected={formData.hasRenewableEnergy ? "yes" : "no"}
+              onSelect={(value) =>
+                updateField("hasRenewableEnergy", value === "yes")
+              }
+            />
+          </>
+        );
+
+      case 9:
+        return (
+          <>
+            <ThemedText type="h2" style={styles.question}>
+              How would you describe your water usage?
+            </ThemedText>
+            <Spacer height={Spacing.xl} />
+            <RadioGroup
+              options={[
+                {
+                  label: "Low (Short showers, efficient fixtures)",
+                  value: "low",
+                },
+                { label: "Average (Regular usage)", value: "average" },
+                { label: "High (Long showers, frequent baths)", value: "high" },
+              ]}
+              selected={formData.waterUsage}
+              onSelect={(value) =>
+                updateField("waterUsage", value as SurveyData["waterUsage"])
+              }
+            />
+          </>
+        );
+
+      case 10:
+        return (
+          <>
+            <ThemedText type="h2" style={styles.question}>
+              How comprehensive are your recycling habits?
+            </ThemedText>
+            <Spacer height={Spacing.xl} />
+            <RadioGroup
+              options={[
+                { label: "Minimal (Rarely recycle)", value: "minimal" },
+                { label: "Average (Recycle some items)", value: "average" },
+                {
+                  label: "Comprehensive (Recycle most items)",
+                  value: "comprehensive",
+                },
+              ]}
+              selected={formData.recyclingHabits}
+              onSelect={(value) =>
+                updateField(
+                  "recyclingHabits",
+                  value as SurveyData["recyclingHabits"],
+                )
+              }
+            />
+          </>
+        );
+
+      case 11:
+        return (
+          <>
+            <ThemedText type="h2" style={styles.question}>
+              How many round-trip flights do you take per year?
+            </ThemedText>
+            <Spacer height={Spacing.xl} />
+            <NumberInput
+              value={formData.flightsPerYear}
+              onChange={(value) => updateField("flightsPerYear", value)}
+              min={0}
+              max={20}
+              step={1}
+            />
+          </>
+        );
 
       case 12:
         return (

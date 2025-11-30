@@ -15,14 +15,14 @@ import { useApp } from "@/contexts/AppContext";
 import { SurveyData, Device } from "@/utils/types";
 
 export type RetakeSurveyParamList = {
-  RetakeSurvey: { step: number };
+  RetakeSurveyScreen: { step: number };
 };
 
 type RetakeSurveyNavigationProp = NativeStackNavigationProp<
   RetakeSurveyParamList,
-  "RetakeSurvey"
+  "RetakeSurveyScreen"
 >;
-type RetakeSurveyRouteProp = RouteProp<RetakeSurveyParamList, "RetakeSurvey">;
+type RetakeSurveyRouteProp = RouteProp<RetakeSurveyParamList, "RetakeSurveyScreen">;
 
 const TOTAL_STEPS = 13;
 
