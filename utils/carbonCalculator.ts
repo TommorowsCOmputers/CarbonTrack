@@ -10,16 +10,19 @@ export function calculateCarbonFootprint(
 ): CarbonFootprint {
   const breakdown = {
     heating: calculateHeating(survey),
-    electricity: calculateElectricity(survey),
+    electricity: calculateElectricity(survey, survey.occupants),
     transportation: calculateTransportation(survey),
-    food: calculateFood(survey),
-    shopping: calculateShopping(survey),
-    travel: calculateTravel(survey),
+    food: calculateFood(survey, survey.occupants),
+    shopping: calculateShopping(survey, survey.occupants),
+    travel: calculateTravel(survey, survey.occupants),
   };
 
   // Add water, recycling, and packaged food impact
-  const waterAndRecycling = calculateWaterAndRecycling(survey);
-  const packagedFoodImpact = calculatePackagedFood(survey);
+  const waterAndRecycling = calculateWaterAndRecycling(
+    survey,
+    survey.occupants,
+  );
+  const packagedFoodImpact = calculatePackagedFood(survey); // household-level only
 
   const totalKg =
     breakdown.heating +
@@ -103,11 +106,11 @@ function calculateHeating(survey: SurveyData): number {
   }
 }
 
-function calculateElectricity(survey: SurveyData): number {
+function calculateElectricity(survey: SurveyData, occupants: number): number {
   let kWh =
     emissionFactors.electricity.annualUsage[survey.electricityUsage] || 10800;
 
-  const adjustedKWh = kWh * (survey.occupants / 2.5);
+  const adjustedKWh = kWh * (occupants / 2.5);
 
   const ledReduction = survey.ledPercentage
     ? (survey.ledPercentage / 100) * 0.75
@@ -158,31 +161,33 @@ function calculateTransportation(survey: SurveyData): number {
   }
 }
 
-function calculateFood(survey: SurveyData): number {
+function calculateFood(survey: SurveyData, occupants: number): number {
   const dietMap: Record<string, number> = {
     "meat-heavy": emissionFactors.food.meatHeavy,
     average: emissionFactors.food.average,
     vegetarian: emissionFactors.food.vegetarian,
     vegan: emissionFactors.food.vegan,
   };
-  return (
-    (dietMap[survey.dietType] || emissionFactors.food.average) *
-    survey.occupants
-  );
+  return (dietMap[survey.dietType] || emissionFactors.food.average) * occupants;
 }
 
-function calculateShopping(survey: SurveyData): number {
+function calculateShopping(survey: SurveyData, occupants: number): number {
   return (
     (emissionFactors.shopping[survey.shoppingHabits] ||
-      emissionFactors.shopping.average) * survey.occupants
+      emissionFactors.shopping.average) * occupants
   );
 }
 
-function calculateTravel(survey: SurveyData): number {
-  return survey.flightsPerYear * emissionFactors.flights.kgCO2PerFlight;
+function calculateTravel(survey: SurveyData, occupants: number): number {
+  return (
+    survey.flightsPerYear * emissionFactors.flights.kgCO2PerFlight * occupants
+  );
 }
 
-function calculateWaterAndRecycling(survey: SurveyData): number {
+function calculateWaterAndRecycling(
+  survey: SurveyData,
+  occupants: number,
+): number {
   const waterEmissions = {
     low: 80,
     average: 130,
@@ -190,8 +195,7 @@ function calculateWaterAndRecycling(survey: SurveyData): number {
   };
 
   const baseWaterEmissions =
-    (waterEmissions[survey.waterUsage] || waterEmissions.average) *
-    survey.occupants;
+    (waterEmissions[survey.waterUsage] || waterEmissions.average) * occupants;
 
   const recyclingReduction = {
     minimal: 0,
@@ -212,8 +216,7 @@ function calculatePackagedFood(survey: SurveyData): number {
   };
 
   return (
-    (packagedFoodFactors[survey.packagedFood] || packagedFoodFactors.average) *
-    survey.occupants
+    packagedFoodFactors[survey.packagedFood] || packagedFoodFactors.average
   );
 }
 
@@ -263,6 +266,7 @@ export function generateRecommendations(
     estimatedReduction: footprint.breakdown.electricity * 0.5,
     difficulty: "medium",
   });
+
   recommendations.push({
     id: "smart-thermostat",
     category: "heating",
@@ -271,5 +275,47 @@ export function generateRecommendations(
     estimatedReduction: footprint.breakdown.heating * 0.1,
     difficulty: "medium",
   });
+
+  // Transportation
+  if (survey.vehicleType === "gas" || survey.vehicleType === "diesel") {
+    recommendations.push({
+      id: "carpool",
+      category: "transportation",
+      title: "Carpool or use public transit",
+      description:
+        "Sharing rides or using transit reduces emissions per person.",
+      estimatedReduction: footprint.breakdown.transportation * 0.15,
+      difficulty: "easy",
+    });
+  }
+  if (
+    survey.vehicleType === "gas" ||
+    survey.vehicleType === "diesel" ||
+    survey.vehicleType === "hybrid"
+  ) {
+    recommendations.push({
+      id: "switch-to-ev",
+      category: "transportation",
+      title: "Consider switching to an electric vehicle",
+      description:
+        "EVs produce fewer emissions over their lifetime compared to gas or diesel cars.",
+      estimatedReduction: footprint.breakdown.transportation * 0.3,
+      difficulty: "hard",
+    });
+  }
+
+  // Travel
+  if (survey.flightsPerYear > 2) {
+    recommendations.push({
+      id: "reduce-flights",
+      category: "travel",
+      title: "Reduce air travel",
+      description:
+        "Flying less or choosing alternatives like trains can significantly cut emissions.",
+      estimatedReduction: footprint.breakdown.travel * 0.25,
+      difficulty: "hard",
+    });
+  }
+
   return recommendations;
 }

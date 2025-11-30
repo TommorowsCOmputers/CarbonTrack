@@ -1,15 +1,15 @@
 // Average emissions per person per category (metric tons CO2e/year)
 // Source: https://github.com/javenly/carbon_app_emmisions
 export const averageEmissionsPerPerson = {
-  food: 2.0,
-  shopping: 1.5,
-  heating: 2.8,
-  electricity: 1.0,
-  transportation: 4.0,
-  airTravel: 0.6,
+  food: 1.1,
+  shopping: 0.9,
+  heating: 1.5,
+  electricity: 0.6,
+  transportation: 1.5,
+  airTravel: 0.4,
 };
 
-export const TOTAL_AVERAGE_PER_PERSON = 10.9; // metric tons CO2e/year
+export const TOTAL_AVERAGE_PER_PERSON = 6.0; // metric tons CO2e/year per person
 
 export function isAboveAverage(totalEmissions: number, occupants: number): boolean {
   const perPersonEmissions = totalEmissions / occupants;

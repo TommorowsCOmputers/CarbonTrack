@@ -1,5 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, View, Image, Switch, Pressable, Platform, Alert } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Image,
+  Switch,
+  Pressable,
+  Platform,
+  Alert,
+} from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { ThemedText } from "@/components/ThemedText";
@@ -88,7 +96,10 @@ export default function ProfileScreen() {
       }
     } catch (error) {
       console.error("Error sending test notification:", error);
-      Alert.alert("Notification Error", "Could not send notification. Please check your notification permissions.");
+      Alert.alert(
+        "Notification Error",
+        "Could not send notification. Please check your notification permissions.",
+      );
     }
   };
 
@@ -127,14 +138,15 @@ export default function ProfileScreen() {
             <View style={styles.settingLabelRow}>
               <Feather name="bell" size={20} color={theme.primary} />
               <ThemedText type="body" style={styles.settingLabel}>
-                Daily Encouragement
+                Daily Encouragement Notifications
               </ThemedText>
             </View>
             <ThemedText
               type="small"
               style={[styles.settingDescription, { color: theme.neutral }]}
             >
-              Receive daily motivational messages
+              This is a new Beta feature. Please report any issues to
+              301-937-5600.
             </ThemedText>
           </View>
           <Switch
@@ -193,14 +205,21 @@ export default function ProfileScreen() {
         <View style={styles.coinStatsRow}>
           <View style={styles.coinStat}>
             <Feather name="check-circle" size={16} color={BrandColors.cyan} />
-            <ThemedText type="small" style={{ color: theme.neutral, marginLeft: Spacing.xs }}>
+            <ThemedText
+              type="small"
+              style={{ color: theme.neutral, marginLeft: Spacing.xs }}
+            >
               {completedChallenges.length} challenges completed
             </ThemedText>
           </View>
         </View>
         <Spacer height={Spacing.sm} />
-        <ThemedText type="small" style={{ color: theme.neutral, lineHeight: 18 }}>
-          Earn coins by completing eco-challenges: Easy = 1, Medium = 2, Hard = 3 coins
+        <ThemedText
+          type="small"
+          style={{ color: theme.neutral, lineHeight: 18 }}
+        >
+          Earn coins by completing eco-challenges: Easy = 1, Medium = 2, Hard =
+          3 coins
         </ThemedText>
       </Card>
 

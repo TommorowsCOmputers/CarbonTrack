@@ -64,7 +64,7 @@ Preferred communication style: Simple, everyday language.
 - Water and recycling impact calculations
 - Device emissions tracking
 - Action-based reduction modeling (10% per action, max 40%)
-- Comparison to national average (14 tons per person annually)
+- Comparison to average (6 tons per person annually)
 
 **Data Flow:**
 1. User completes survey → SurveyData stored in AsyncStorage
