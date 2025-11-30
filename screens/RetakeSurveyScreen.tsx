@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, StyleSheet, TextInput } from "react-native";
+import { View, StyleSheet, TextInput, Pressable } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RouteProp } from "@react-navigation/native";
@@ -557,18 +557,25 @@ export default function RetakeSurveyScreen() {
 
       <View style={styles.buttons}>
         {currentStep > 1 ? (
-          <Button
+          <Pressable
             onPress={handleBack}
-            style={[styles.button, { backgroundColor: theme.neutral }]}
+            style={[styles.button, styles.buttonBase, { backgroundColor: theme.neutral }]}
           >
-            Back
-          </Button>
+            <ThemedText type="body" style={{ color: theme.buttonText }}>
+              Back
+            </ThemedText>
+          </Pressable>
         ) : (
           <View style={styles.button} />
         )}
-        <Button onPress={handleNext} style={styles.button}>
-          {currentStep === TOTAL_STEPS ? "Finish" : "Next"}
-        </Button>
+        <Pressable
+          onPress={handleNext}
+          style={[styles.button, styles.buttonBase, { backgroundColor: theme.link }]}
+        >
+          <ThemedText type="body" style={{ color: theme.buttonText }}>
+            {currentStep === TOTAL_STEPS ? "Finish" : "Next"}
+          </ThemedText>
+        </Pressable>
       </View>
     </ScreenScrollView>
   );
@@ -599,6 +606,13 @@ const styles = StyleSheet.create({
   },
   button: {
     flex: 1,
+  },
+  buttonBase: {
+    borderRadius: BorderRadius.md,
+    paddingVertical: Spacing.md,
+    paddingHorizontal: Spacing.lg,
+    alignItems: "center",
+    justifyContent: "center",
   },
   textInput: {
     borderWidth: 1,
