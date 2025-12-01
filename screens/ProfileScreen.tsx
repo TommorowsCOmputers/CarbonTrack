@@ -10,7 +10,6 @@ import {
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ThemedText } from "@/components/ThemedText";
 import { Card } from "@/components/Card";
 import { ScreenScrollView } from "@/components/ScreenScrollView";
@@ -18,7 +17,6 @@ import Spacer from "@/components/Spacer";
 import { Spacing, BorderRadius, BrandColors } from "@/constants/theme";
 import { useTheme } from "@/hooks/useTheme";
 import { useApp } from "@/contexts/AppContext";
-import type { RootStackParamList } from "@/navigation/RootNavigator";
 import {
   getNotificationsEnabled,
   saveNotificationsEnabled,
@@ -38,12 +36,10 @@ const AVATARS = {
   earth: require("@/assets/avatars/earth.png"),
 };
 
-type ProfileScreenNavigationProp = NativeStackNavigationProp<RootStackParamList>;
-
 export default function ProfileScreen() {
   const { theme } = useTheme();
-  const { userProfile, carbonCoins, completedChallenges, resetSurvey } = useApp();
-  const navigation = useNavigation<ProfileScreenNavigationProp>();
+  const { userProfile, carbonCoins, completedChallenges } = useApp();
+  const navigation = useNavigation();
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
   const [isTogglingNotification, setIsTogglingNotification] = useState(false);
 
@@ -105,11 +101,6 @@ export default function ProfileScreen() {
         "Could not send notification. Please check your notification permissions.",
       );
     }
-  };
-
-  const handleRetakeSurvey = async () => {
-    await resetSurvey();
-    navigation.navigate("Survey", { step: 1 });
   };
 
   if (!userProfile) {
@@ -225,44 +216,6 @@ export default function ProfileScreen() {
         >
           Earn coins by completing eco-challenges: Easy = 1, Medium = 2, Hard =
           3 coins
-        </ThemedText>
-      </Card>
-
-      <Spacer height={Spacing["2xl"]} />
-
-      <ThemedText type="h3" style={styles.sectionTitle}>
-        Actions
-      </ThemedText>
-      <Spacer height={Spacing.md} />
-      <Card elevation={1} style={styles.card}>
-        <Pressable
-          style={[
-            styles.actionButton,
-            { backgroundColor: theme.backgroundSecondary },
-          ]}
-          onPress={handleRetakeSurvey}
-        >
-          <Feather name="refresh-cw" size={18} color={theme.primary} />
-          <ThemedText
-            type="body"
-            style={{
-              color: theme.primary,
-              marginLeft: Spacing.md,
-              fontWeight: "600",
-            }}
-          >
-            Retake Survey
-          </ThemedText>
-        </Pressable>
-        <ThemedText
-          type="small"
-          style={[
-            styles.actionDescription,
-            { color: theme.neutral, marginTop: Spacing.md },
-          ]}
-        >
-          Update your carbon footprint calculation with new lifestyle
-          information
         </ThemedText>
       </Card>
 
