@@ -25,7 +25,7 @@ console.log(">>> SurveyScreen file loaded <<<");
 export default function SurveyScreen({ navigation, route }: SurveyScreenProps) {
   const { theme } = useTheme();
   const { completeSurvey } = useApp();
-  const currentStep = route.params.step;
+  const currentStep = route?.params?.step ?? 1;
 
   const [formData, setFormData] = useState<SurveyData>({
     homeSize: "medium",
