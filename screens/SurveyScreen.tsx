@@ -16,7 +16,7 @@ import type { RootStackParamList } from "@/navigation/RootNavigator";
 
 type SurveyScreenProps = {
   navigation: NativeStackNavigationProp<RootStackParamList, "Survey">;
-  route: RouteProp<RootStackParamList, "Survey">;
+  route?: RouteProp<RootStackParamList, "Survey">;
 };
 
 const TOTAL_STEPS = 14;
@@ -26,6 +26,10 @@ export default function SurveyScreen({ navigation, route }: SurveyScreenProps) {
   const { theme } = useTheme();
   const { completeSurvey } = useApp();
   const currentStep = route?.params?.step ?? 1;
+
+  if (!route) {
+    return <View style={{ flex: 1 }} />;
+  }
 
   const [formData, setFormData] = useState<SurveyData>({
     homeSize: "medium",
