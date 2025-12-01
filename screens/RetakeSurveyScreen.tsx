@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { View, StyleSheet, TextInput, Pressable } from "react-native";
-import { useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RouteProp } from "@react-navigation/native";
 import { ThemedText } from "@/components/ThemedText";
@@ -13,25 +12,20 @@ import { Spacing, BorderRadius } from "@/constants/theme";
 import { useTheme } from "@/hooks/useTheme";
 import { useApp } from "@/contexts/AppContext";
 import { SurveyData, Device } from "@/utils/types";
+import type { RootStackParamList } from "@/navigation/RootNavigator";
 
-export type RetakeSurveyParamList = {
-  RetakeSurveyScreen: { step: number };
+type SurveyScreenProps = {
+  navigation: NativeStackNavigationProp<RootStackParamList, "Survey">;
+  route: RouteProp<RootStackParamList, "Survey">;
 };
 
-type RetakeSurveyNavigationProp = NativeStackNavigationProp<
-  RetakeSurveyParamList,
-  "RetakeSurveyScreen"
->;
-type RetakeSurveyRouteProp = RouteProp<RetakeSurveyParamList, "RetakeSurveyScreen">;
+const TOTAL_STEPS = 14;
+console.log(">>> SurveyScreen file loaded <<<");
 
-const TOTAL_STEPS = 13;
-
-export default function RetakeSurveyScreen() {
-  const navigation = useNavigation<RetakeSurveyNavigationProp>();
-  const route = useRoute<RetakeSurveyRouteProp>();
+export default function SurveyScreen({ navigation, route }: SurveyScreenProps) {
   const { theme } = useTheme();
   const { completeSurvey } = useApp();
-  const currentStep = route.params?.step || 1;
+  const currentStep = route.params.step;
 
   const [formData, setFormData] = useState<SurveyData>({
     homeSize: "medium",
@@ -49,6 +43,7 @@ export default function RetakeSurveyScreen() {
     shoppingHabits: "average",
     flightsPerYear: 2,
     packagedFood: "average",
+    pets: 0,
     devices: [],
   });
 
@@ -65,16 +60,16 @@ export default function RetakeSurveyScreen() {
 
   const handleNext = () => {
     if (currentStep < TOTAL_STEPS) {
-      navigation.navigate("RetakeSurveyScreen", { step: currentStep + 1 });
+      navigation.navigate("Survey", { step: currentStep + 1 });
     } else {
       completeSurvey(formData);
-      navigation.getParent()?.navigate("HomeTab" as any);
+      navigation.navigate("Results");
     }
   };
 
   const handleBack = () => {
     if (currentStep > 1) {
-      navigation.navigate("RetakeSurveyScreen", { step: currentStep - 1 });
+      navigation.navigate("Survey", { step: currentStep - 1 });
     } else {
       navigation.goBack();
     }
@@ -421,6 +416,30 @@ export default function RetakeSurveyScreen() {
         return (
           <>
             <ThemedText type="h2" style={styles.question}>
+              How many pets does your family have?
+            </ThemedText>
+            <Spacer height={Spacing.xl} />
+            <NumberInput
+              value={formData.pets}
+              onChange={(value) => updateField("pets", value)}
+              min={0}
+              max={20}
+              step={1}
+            />
+            <Spacer height={Spacing.md} />
+            <ThemedText
+              type="small"
+              style={[styles.hint, { color: theme.neutral }]}
+            >
+              Each pet produces about 0.545 metric tons of CO2e per year
+            </ThemedText>
+          </>
+        );
+
+      case 14:
+        return (
+          <>
+            <ThemedText type="h2" style={styles.question}>
               Add carbon-producing devices (optional)
             </ThemedText>
             <Spacer height={Spacing.xl} />
@@ -559,7 +578,11 @@ export default function RetakeSurveyScreen() {
         {currentStep > 1 ? (
           <Pressable
             onPress={handleBack}
-            style={[styles.button, styles.buttonBase, { backgroundColor: theme.neutral }]}
+            style={[
+              styles.button,
+              styles.buttonBase,
+              { backgroundColor: theme.neutral },
+            ]}
           >
             <ThemedText type="body" style={{ color: theme.buttonText }}>
               Back
@@ -570,7 +593,11 @@ export default function RetakeSurveyScreen() {
         )}
         <Pressable
           onPress={handleNext}
-          style={[styles.button, styles.buttonBase, { backgroundColor: theme.link }]}
+          style={[
+            styles.button,
+            styles.buttonBase,
+            { backgroundColor: theme.link },
+          ]}
         >
           <ThemedText type="body" style={{ color: theme.buttonText }}>
             {currentStep === TOTAL_STEPS ? "Finish" : "Next"}

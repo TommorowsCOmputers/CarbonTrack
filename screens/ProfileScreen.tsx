@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ThemedText } from "@/components/ThemedText";
 import { Card } from "@/components/Card";
 import { ScreenScrollView } from "@/components/ScreenScrollView";
@@ -17,6 +18,7 @@ import Spacer from "@/components/Spacer";
 import { Spacing, BorderRadius, BrandColors } from "@/constants/theme";
 import { useTheme } from "@/hooks/useTheme";
 import { useApp } from "@/contexts/AppContext";
+import type { RootStackParamList } from "@/navigation/RootNavigator";
 import {
   getNotificationsEnabled,
   saveNotificationsEnabled,
@@ -36,10 +38,12 @@ const AVATARS = {
   earth: require("@/assets/avatars/earth.png"),
 };
 
+type ProfileScreenNavigationProp = NativeStackNavigationProp<RootStackParamList>;
+
 export default function ProfileScreen() {
   const { theme } = useTheme();
-  const { userProfile, carbonCoins, completedChallenges } = useApp();
-  const navigation = useNavigation();
+  const { userProfile, carbonCoins, completedChallenges, resetSurvey } = useApp();
+  const navigation = useNavigation<ProfileScreenNavigationProp>();
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
   const [isTogglingNotification, setIsTogglingNotification] = useState(false);
 
@@ -103,8 +107,9 @@ export default function ProfileScreen() {
     }
   };
 
-  const handleRetakeSurvey = () => {
-    navigation.navigate("RetakeSurveyTab" as never);
+  const handleRetakeSurvey = async () => {
+    await resetSurvey();
+    navigation.navigate("Survey", { step: 1 });
   };
 
   if (!userProfile) {
