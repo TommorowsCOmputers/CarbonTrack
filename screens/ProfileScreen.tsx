@@ -7,6 +7,7 @@ import {
   Pressable,
   Platform,
   Alert,
+  Linking,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
@@ -237,13 +238,28 @@ export default function ProfileScreen() {
           Version 1.0.0
         </ThemedText>
         <Spacer height={Spacing.md} />
-        <ThemedText
-          type="small"
-          style={[styles.cardDescription, { color: theme.neutral }]}
-        >
-          Emission factors based on EPA Greenhouse Gas Inventory data (2023)
-          To learn more about the impact visit www.javenly.com/carbon
-        </ThemedText>
+        <View style={styles.linkContainer}>
+          <ThemedText
+            type="small"
+            style={[styles.cardDescription, { color: theme.neutral }]}
+          >
+            Emission factors based on EPA Greenhouse Gas Inventory data (2023)
+            To learn more about the impact visit{" "}
+          </ThemedText>
+          <Pressable
+            onPress={() => Linking.openURL("https://www.javenly.com/carbon")}
+          >
+            <ThemedText
+              type="small"
+              style={[
+                styles.cardDescription,
+                { color: theme.link, textDecorationLine: "underline" },
+              ]}
+            >
+              www.javenly.com/carbon
+            </ThemedText>
+          </Pressable>
+        </View>
       </Card>
 
       <Spacer height={Spacing["2xl"]} />
@@ -278,6 +294,11 @@ const styles = StyleSheet.create({
   },
   cardDescription: {
     marginTop: Spacing.xs,
+  },
+  linkContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    alignItems: "center",
   },
   settingRow: {
     flexDirection: "row",
