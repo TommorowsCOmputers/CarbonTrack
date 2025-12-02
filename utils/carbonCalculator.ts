@@ -64,6 +64,8 @@ export function calculateCarbonFootprint(
       food: (breakdown.food / 1000) * (1 - actionReduction),
       shopping: (breakdown.shopping / 1000) * (1 - actionReduction),
       travel: (breakdown.travel / 1000) * (1 - actionReduction),
+      water: (waterAndRecycling / 1000) * (1 - actionReduction),
+      packagedFood: (packagedFoodImpact / 1000) * (1 - actionReduction),
       pets: (petEmissions / 1000) * (1 - actionReduction),
     },
   };
@@ -130,7 +132,7 @@ function calculateElectricity(survey: SurveyData, occupants: number): number {
         : 0);
 
   const finalKWh =
-    adjustedKWh * (1 - ledReduction - renewableReduction) * waterAdjustment;
+    adjustedKWh * (1 - Math.min(ledReduction + renewableReduction, 1)) * waterAdjustment;
 
   return Math.max(0, finalKWh * emissionFactors.electricity.kgCO2PerKWh);
 }

@@ -65,6 +65,8 @@ export interface CarbonFootprint {
     food: number;
     shopping: number;
     travel: number;
+    water: number;
+    packagedFood: number;
     pets: number;
   };
 }

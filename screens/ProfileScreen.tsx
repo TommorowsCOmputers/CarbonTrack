@@ -241,7 +241,7 @@ export default function ProfileScreen() {
           type="small"
           style={[styles.cardDescription, { color: theme.neutral }]}
         >
-          Emission factors based on EPA Greenhouse Gas Inventory data (2025)
+          Emission factors based on EPA Greenhouse Gas Inventory data (2023)
         </ThemedText>
       </Card>
 
