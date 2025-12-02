@@ -24,7 +24,7 @@ type RetakeSurveyNavigationProp = NativeStackNavigationProp<
 >;
 type RetakeSurveyRouteProp = RouteProp<RetakeSurveyParamList, "RetakeSurveyScreen">;
 
-const TOTAL_STEPS = 13;
+const TOTAL_STEPS = 14;
 
 export default function RetakeSurveyScreen() {
   const navigation = useNavigation<RetakeSurveyNavigationProp>();
@@ -419,6 +419,30 @@ export default function RetakeSurveyScreen() {
         );
 
       case 13:
+        return (
+          <>
+            <ThemedText type="h2" style={styles.question}>
+              How many pets does your family have?
+            </ThemedText>
+            <Spacer height={Spacing.xl} />
+            <NumberInput
+              value={formData.pets}
+              onChange={(value) => updateField("pets", value)}
+              min={0}
+              max={20}
+              step={1}
+            />
+            <Spacer height={Spacing.md} />
+            <ThemedText
+              type="small"
+              style={[styles.hint, { color: theme.neutral }]}
+            >
+              Each pet produces about 0.545 metric tons of CO2e per year
+            </ThemedText>
+          </>
+        );
+
+      case 14:
         return (
           <>
             <ThemedText type="h2" style={styles.question}>
