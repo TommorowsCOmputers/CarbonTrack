@@ -49,6 +49,7 @@ export default function RetakeSurveyScreen() {
     shoppingHabits: "average",
     flightsPerYear: 2,
     packagedFood: "average",
+    pets: 0,
     devices: [],
   });
 
