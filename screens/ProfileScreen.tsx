@@ -242,6 +242,7 @@ export default function ProfileScreen() {
           style={[styles.cardDescription, { color: theme.neutral }]}
         >
           Emission factors based on EPA Greenhouse Gas Inventory data (2023)
+          To learn more about the impact visit www.javenly.com/carbon
         </ThemedText>
       </Card>
 
