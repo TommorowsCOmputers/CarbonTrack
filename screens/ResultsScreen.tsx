@@ -9,7 +9,7 @@ import Spacer from "@/components/Spacer";
 import { Spacing } from "@/constants/theme";
 import { useTheme } from "@/hooks/useTheme";
 import { useApp } from "@/contexts/AppContext";
-import { AVERAGE_ANNUAL_TONS_PER_PERSON } from "@/utils/constants";
+import { isAboveAverage } from "@/utils/averageEmissions";
 import type { RootStackParamList } from "@/navigation/RootNavigator";
 
 type ResultsScreenProps = {
@@ -25,8 +25,7 @@ export default function ResultsScreen({ navigation }: ResultsScreenProps) {
   }
 
   const occupants = surveyData.occupants || 1;
-  const averageAnnualTons = AVERAGE_ANNUAL_TONS_PER_PERSON * occupants;
-  const isAboveAverage = footprint.total > averageAnnualTons;
+  const isAboveAveragePerPerson = isAboveAverage(footprint.total, occupants);
 
   return (
     <ScreenScrollView contentContainerStyle={styles.content}>
@@ -53,9 +52,9 @@ export default function ResultsScreen({ navigation }: ResultsScreenProps) {
       </ThemedText>
       <Spacer height={Spacing.md} />
       <ThemedText type="body" style={[styles.description, { color: theme.neutral }]}>
-        {isAboveAverage
-          ? "Your carbon footprint is above the US average. Don't worry - the app will help you identify specific ways to reduce your impact."
-          : "Great job! Your carbon footprint is below the US average. The app will show you ways to reduce it even further."}
+        {isAboveAveragePerPerson
+          ? "Your carbon footprint is above the average per person. Don't worry - the app will help you identify specific ways to reduce your impact."
+          : "Great job! Your carbon footprint is below the average per person. The app will show you ways to reduce it even further."}
       </ThemedText>
 
       <Spacer height={Spacing["3xl"]} />
@@ -69,7 +68,7 @@ export default function ResultsScreen({ navigation }: ResultsScreenProps) {
           type="display"
           style={[
             styles.annualValue,
-            { color: isAboveAverage ? theme.amber : theme.primary },
+            { color: isAboveAveragePerPerson ? theme.amber : theme.primary },
           ]}
         >
           {footprint.total.toFixed(2)}
