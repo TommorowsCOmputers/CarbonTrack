@@ -57,7 +57,13 @@
       "reactCompiler": true
     },
     "extra": {
-      "apiUrl": "",
+      "FIREBASE_API_KEY": "",
+      "FIREBASE_AUTH_DOMAIN": "",
+      "FIREBASE_PROJECT_ID": "",
+      "FIREBASE_STORAGE_BUCKET": "",
+      "FIREBASE_MESSAGING_SENDER_ID": "",
+      "FIREBASE_APP_ID": "",
+      "FIREBASE_MEASUREMENT_ID": "",
       "ADMOB_BANNER_IOS": "ca-app-pub-6040063651962532/5852061667",
       "ADMOB_BANNER_ANDROID": "ca-app-pub-6040063651962532/9512105076",
       "ADMOB_BANNER_ANDROID_BOTTOM_HOME": "ca-app-pub-6040063651962532/4044155973",

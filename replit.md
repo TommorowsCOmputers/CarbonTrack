@@ -212,48 +212,54 @@ npx expo run:android  # or run:ios
 - `@carbon_tracker:carbon_coins`: Total accumulated carbon coins (number)
 - `@carbon_tracker:completed_challenges`: Array of completed challenge IDs (string[])
 
-### Cloud Database Sync (Optional)
+### Cloud Database Sync (Firebase Firestore)
 **Feature Overview:**
-- PostgreSQL database stores user data globally (username, avatar, carbon coins)
+- Firebase Firestore stores user data globally (username, avatar, carbon coins)
 - Automatic sync when users earn new carbon coins
 - Device ID-based user identification (no authentication required)
-- Graceful fallback to local storage when API is unavailable
+- Graceful fallback to local storage when Firebase isn't configured
+- Works across iOS, Android, and Web platforms
 
-**Backend API Server:**
-- `server/index.js`: Express server with PostgreSQL connection
-- Endpoints:
-  - `GET /api/user/:deviceId` - Fetch user data
-  - `POST /api/user` - Create or update user
-  - `PATCH /api/user/:deviceId/coins` - Update carbon coins
-  - `GET /api/leaderboard` - Get top 100 users by carbon coins
+**Implementation:**
+- `utils/firebase.ts`: Firebase SDK configuration and Firestore operations
+- Functions:
+  - `fetchUser(deviceId)` - Fetch user data from Firestore
+  - `createOrUpdateUser(...)` - Create or update user document
+  - `updateCarbonCoins(...)` - Update carbon coins field
+  - `fetchLeaderboard()` - Get top 100 users by carbon coins
+  - `isFirebaseEnabled()` - Check if Firebase is configured
 
-**Database Schema:**
-```sql
-CREATE TABLE users (
-  id SERIAL PRIMARY KEY,
-  device_id VARCHAR(255) UNIQUE NOT NULL,
-  username VARCHAR(100) NOT NULL,
-  avatar VARCHAR(50) DEFAULT 'leaf',
-  carbon_coins INTEGER DEFAULT 0,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+**Firestore Collection Structure:**
+```
+users/{deviceId}
+  - device_id: string
+  - username: string
+  - avatar: string
+  - carbon_coins: number
+  - created_at: timestamp
+  - updated_at: timestamp
 ```
 
-**Running Both Servers:**
-To run the API alongside the Expo app, use the provided script:
-```bash
-./start-all.sh
-```
-Or run manually:
-```bash
-node server/index.js &
-npm run dev
-```
+**Setup Instructions:**
+1. Create Firebase project at https://console.firebase.google.com
+2. Add web app to get configuration
+3. Enable Firestore Database in Firebase Console
+4. Store Firebase credentials in Replit Secrets:
+   - FIREBASE_API_KEY
+   - FIREBASE_AUTH_DOMAIN
+   - FIREBASE_PROJECT_ID
+   - FIREBASE_STORAGE_BUCKET
+   - FIREBASE_MESSAGING_SENDER_ID
+   - FIREBASE_APP_ID
+   - FIREBASE_MEASUREMENT_ID
 
-**Environment Variables:**
-- `DATABASE_URL`: PostgreSQL connection string (auto-configured by Replit)
-- `API_PORT`: API server port (default: 8082, maps to external 3000)
+**Operating Modes:**
+- **With Firebase credentials**: Global sync enabled across devices
+- **Without Firebase credentials**: App runs in local-only mode using AsyncStorage
+
+**Dependencies:**
+- `firebase@12.6.0`: Firebase JS SDK for web compatibility
+- `metro.config.js`: Configured to support Firebase's .cjs files
 
 ### Notable Exclusions
 - No authentication service (uses device ID for user identification)

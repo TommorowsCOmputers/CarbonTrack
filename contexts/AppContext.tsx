@@ -33,7 +33,8 @@ import {
   fetchUser,
   createOrUpdateUser,
   updateCarbonCoins as syncCarbonCoinsToServer,
-} from "@/utils/api";
+  isFirebaseEnabled,
+} from "@/utils/firebase";
 
 interface AppContextType {
   userProfile: UserProfile | null;

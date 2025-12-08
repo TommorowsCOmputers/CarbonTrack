@@ -1,20 +1,41 @@
-import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, doc, getDoc, setDoc, updateDoc, getDocs, query, orderBy, limit } from 'firebase/firestore';
+import { initializeApp, FirebaseApp } from 'firebase/app';
+import { getFirestore, collection, doc, getDoc, setDoc, updateDoc, getDocs, query, orderBy, limit, Firestore } from 'firebase/firestore';
 import * as Application from 'expo-application';
 import { Platform } from 'react-native';
 
+import Constants from 'expo-constants';
+
 const firebaseConfig = {
-  apiKey: process.env.FIREBASE_API_KEY,
-  authDomain: process.env.FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.FIREBASE_PROJECT_ID,
-  storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.FIREBASE_APP_ID,
-  measurementId: process.env.FIREBASE_MEASUREMENT_ID,
+  apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY || Constants.expoConfig?.extra?.FIREBASE_API_KEY,
+  authDomain: process.env.EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN || Constants.expoConfig?.extra?.FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.EXPO_PUBLIC_FIREBASE_PROJECT_ID || Constants.expoConfig?.extra?.FIREBASE_PROJECT_ID,
+  storageBucket: process.env.EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET || Constants.expoConfig?.extra?.FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID || Constants.expoConfig?.extra?.FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.EXPO_PUBLIC_FIREBASE_APP_ID || Constants.expoConfig?.extra?.FIREBASE_APP_ID,
+  measurementId: process.env.EXPO_PUBLIC_FIREBASE_MEASUREMENT_ID || Constants.expoConfig?.extra?.FIREBASE_MEASUREMENT_ID,
 };
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+let app: FirebaseApp | null = null;
+let db: Firestore | null = null;
+
+try {
+  if (
+    firebaseConfig.apiKey &&
+    firebaseConfig.authDomain &&
+    firebaseConfig.projectId &&
+    firebaseConfig.appId
+  ) {
+    app = initializeApp(firebaseConfig);
+    db = getFirestore(app);
+    console.log('Firebase initialized successfully');
+  } else {
+    console.log('Firebase credentials not configured - running in local-only mode');
+  }
+} catch (error) {
+  console.error('Firebase initialization error:', error);
+  app = null;
+  db = null;
+}
 
 export async function getDeviceId(): Promise<string> {
   if (Platform.OS === 'ios') {
@@ -51,6 +72,9 @@ export interface UserData {
 }
 
 export async function fetchUser(deviceId: string): Promise<UserData | null> {
+  if (!db) {
+    return null;
+  }
   try {
     const userRef = doc(db, 'users', deviceId);
     const userSnap = await getDoc(userRef);
@@ -72,6 +96,9 @@ export async function createOrUpdateUser(
   avatar: string,
   carbonCoins: number
 ): Promise<UserData | null> {
+  if (!db) {
+    return null;
+  }
   try {
     const userRef = doc(db, 'users', deviceId);
     const userData: UserData = {
@@ -99,6 +126,9 @@ export async function updateCarbonCoins(
   deviceId: string,
   carbonCoins: number
 ): Promise<UserData | null> {
+  if (!db) {
+    return null;
+  }
   try {
     const userRef = doc(db, 'users', deviceId);
     await updateDoc(userRef, {
@@ -115,6 +145,9 @@ export async function updateCarbonCoins(
 }
 
 export async function fetchLeaderboard(): Promise<UserData[]> {
+  if (!db) {
+    return [];
+  }
   try {
     const usersRef = collection(db, 'users');
     const q = query(usersRef, orderBy('carbon_coins', 'desc'), limit(100));
@@ -133,9 +166,5 @@ export async function fetchLeaderboard(): Promise<UserData[]> {
 }
 
 export const isFirebaseEnabled = (): boolean => {
-  return !!(
-    firebaseConfig.apiKey &&
-    firebaseConfig.authDomain &&
-    firebaseConfig.projectId
-  );
+  return db !== null;
 };
