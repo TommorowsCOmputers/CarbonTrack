@@ -3,7 +3,7 @@ const cors = require('cors');
 const { Pool } = require('pg');
 
 const app = express();
-const port = process.env.API_PORT || 3001;
+const port = parseInt(process.env.API_PORT || '8082', 10);
 
 app.use(cors());
 app.use(express.json());

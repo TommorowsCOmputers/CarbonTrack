@@ -41,6 +41,10 @@ localPort = 40593
 externalPort = 8080
 
 [[ports]]
+localPort = 40623
+externalPort = 9000
+
+[[ports]]
 localPort = 40927
 externalPort = 3001
 
@@ -142,3 +146,4 @@ value = "0"
 [userenv.shared]
 ADMOB_BANNER_IOS = "ca-app-pub-6040063651962532/5852061667"
 ADMOB_BANNER_ANDROID = "ca-app-pub-6040063651962532/9512105076"
+API_PORT = "8082"

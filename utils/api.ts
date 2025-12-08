@@ -1,7 +1,36 @@
 import * as Application from 'expo-application';
 import { Platform } from 'react-native';
+import Constants from 'expo-constants';
 
-const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || 'https://0d3b864d-988a-4f99-9416-a4af676fb568-00-3rzkho892rb65.worf.replit.dev:3001';
+const getApiBaseUrl = (): string | null => {
+  const envApiUrl = process.env.EXPO_PUBLIC_API_URL;
+  if (envApiUrl) {
+    return envApiUrl;
+  }
+  
+  const expoApiUrl = Constants.expoConfig?.extra?.apiUrl;
+  if (expoApiUrl) {
+    return expoApiUrl;
+  }
+  
+  if (Platform.OS === 'web' && typeof window !== 'undefined') {
+    const hostname = window.location.hostname;
+    if (hostname === 'localhost' || hostname === '127.0.0.1') {
+      return 'http://localhost:8082';
+    }
+    return null;
+  }
+  
+  return null;
+};
+
+const isApiEnabled = (): boolean => {
+  return getApiBaseUrl() !== null;
+};
+
+const API_BASE_URL = getApiBaseUrl();
+
+export { isApiEnabled };
 
 export async function getDeviceId(): Promise<string> {
   if (Platform.OS === 'ios') {
@@ -36,6 +65,9 @@ export interface UserData {
 }
 
 export async function fetchUser(deviceId: string): Promise<UserData | null> {
+  if (!API_BASE_URL) {
+    return null;
+  }
   try {
     const response = await fetch(`${API_BASE_URL}/api/user/${deviceId}`);
     if (response.status === 404) {
@@ -57,6 +89,9 @@ export async function createOrUpdateUser(
   avatar: string,
   carbonCoins: number
 ): Promise<UserData | null> {
+  if (!API_BASE_URL) {
+    return null;
+  }
   try {
     const response = await fetch(`${API_BASE_URL}/api/user`, {
       method: 'POST',
@@ -85,6 +120,9 @@ export async function updateCarbonCoins(
   deviceId: string,
   carbonCoins: number
 ): Promise<UserData | null> {
+  if (!API_BASE_URL) {
+    return null;
+  }
   try {
     const response = await fetch(`${API_BASE_URL}/api/user/${deviceId}/coins`, {
       method: 'PATCH',
@@ -105,6 +143,9 @@ export async function updateCarbonCoins(
 }
 
 export async function fetchLeaderboard(): Promise<UserData[]> {
+  if (!API_BASE_URL) {
+    return [];
+  }
   try {
     const response = await fetch(`${API_BASE_URL}/api/leaderboard`);
     if (!response.ok) {

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState, useEffect, useRef } from "react";
 import {
   UserProfile,
   SurveyData,
@@ -28,6 +28,12 @@ import {
   calculateCarbonFootprint,
   generateRecommendations,
 } from "@/utils/carbonCalculator";
+import {
+  getDeviceId,
+  fetchUser,
+  createOrUpdateUser,
+  updateCarbonCoins as syncCarbonCoinsToServer,
+} from "@/utils/api";
 
 interface AppContextType {
   userProfile: UserProfile | null;
@@ -62,15 +68,35 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [carbonCoins, setCarbonCoins] = useState<number>(0);
   const [completedChallenges, setCompletedChallenges] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const deviceIdRef = useRef<string | null>(null);
 
   useEffect(() => {
     loadData();
   }, []);
 
+  const syncWithServer = async (profile: UserProfile | null, coins: number) => {
+    if (!deviceIdRef.current || !profile) return;
+    
+    try {
+      await createOrUpdateUser(
+        deviceIdRef.current,
+        profile.name,
+        profile.avatar,
+        coins
+      );
+    } catch (error) {
+      console.error("Error syncing with server:", error);
+    }
+  };
+
   const loadData = async () => {
     try {
       setIsLoading(true);
-      const [profile, survey, completed, devices, loadedGoals, coins, challenges] = await Promise.all([
+      
+      const deviceId = await getDeviceId();
+      deviceIdRef.current = deviceId;
+      
+      const [profile, survey, completed, devices, loadedGoals, localCoins, challenges] = await Promise.all([
         getUserProfile(),
         getSurveyData(),
         getCompletedActions(),
@@ -85,8 +111,24 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       setCompletedActions(completed);
       setActiveDevices(devices);
       setGoals(loadedGoals);
-      setCarbonCoins(coins);
       setCompletedChallenges(challenges);
+
+      let finalCoins = localCoins;
+      try {
+        const serverUser = await fetchUser(deviceId);
+        if (serverUser) {
+          finalCoins = Math.max(localCoins, serverUser.carbon_coins);
+          if (finalCoins !== localCoins) {
+            await saveCarbonCoins(finalCoins);
+          }
+        } else if (profile) {
+          await createOrUpdateUser(deviceId, profile.name, profile.avatar, localCoins);
+        }
+      } catch (syncError) {
+        console.error("Error syncing with server:", syncError);
+      }
+      
+      setCarbonCoins(finalCoins);
 
       if (survey) {
         const calculatedFootprint = calculateCarbonFootprint(survey, completed, devices);
@@ -107,6 +149,14 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     };
     await saveUserProfile(profile);
     setUserProfile(profile);
+    
+    if (deviceIdRef.current) {
+      try {
+        await createOrUpdateUser(deviceIdRef.current, name, avatar, carbonCoins);
+      } catch (error) {
+        console.error("Error syncing profile to server:", error);
+      }
+    }
   };
 
   const completeSurvey = async (data: SurveyData) => {
@@ -188,6 +238,14 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
     setCarbonCoins(newCoins);
     setCompletedChallenges(newCompletedChallenges);
+
+    if (deviceIdRef.current) {
+      try {
+        await syncCarbonCoinsToServer(deviceIdRef.current, newCoins);
+      } catch (error) {
+        console.error("Error syncing coins to server:", error);
+      }
+    }
   };
 
   const resetSurvey = async () => {

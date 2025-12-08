@@ -212,9 +212,50 @@ npx expo run:android  # or run:ios
 - `@carbon_tracker:carbon_coins`: Total accumulated carbon coins (number)
 - `@carbon_tracker:completed_challenges`: Array of completed challenge IDs (string[])
 
+### Cloud Database Sync (Optional)
+**Feature Overview:**
+- PostgreSQL database stores user data globally (username, avatar, carbon coins)
+- Automatic sync when users earn new carbon coins
+- Device ID-based user identification (no authentication required)
+- Graceful fallback to local storage when API is unavailable
+
+**Backend API Server:**
+- `server/index.js`: Express server with PostgreSQL connection
+- Endpoints:
+  - `GET /api/user/:deviceId` - Fetch user data
+  - `POST /api/user` - Create or update user
+  - `PATCH /api/user/:deviceId/coins` - Update carbon coins
+  - `GET /api/leaderboard` - Get top 100 users by carbon coins
+
+**Database Schema:**
+```sql
+CREATE TABLE users (
+  id SERIAL PRIMARY KEY,
+  device_id VARCHAR(255) UNIQUE NOT NULL,
+  username VARCHAR(100) NOT NULL,
+  avatar VARCHAR(50) DEFAULT 'leaf',
+  carbon_coins INTEGER DEFAULT 0,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+```
+
+**Running Both Servers:**
+To run the API alongside the Expo app, use the provided script:
+```bash
+./start-all.sh
+```
+Or run manually:
+```bash
+node server/index.js &
+npm run dev
+```
+
+**Environment Variables:**
+- `DATABASE_URL`: PostgreSQL connection string (auto-configured by Replit)
+- `API_PORT`: API server port (default: 8082, maps to external 3000)
+
 ### Notable Exclusions
-- No backend server or API
-- No authentication service
+- No authentication service (uses device ID for user identification)
 - No analytics or crash reporting (by design for privacy)
-- No cloud storage or sync (local-first architecture)
 - No payment processing (free app)
