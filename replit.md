@@ -244,7 +244,7 @@ users/{deviceId}
 1. Create Firebase project at https://console.firebase.google.com
 2. Add web app to get configuration
 3. Enable Firestore Database in Firebase Console
-4. Store Firebase credentials in Replit Secrets:
+4. Store Firebase credentials in Replit Secrets (Tools → Secrets):
    - FIREBASE_API_KEY
    - FIREBASE_AUTH_DOMAIN
    - FIREBASE_PROJECT_ID
@@ -252,6 +252,8 @@ users/{deviceId}
    - FIREBASE_MESSAGING_SENDER_ID
    - FIREBASE_APP_ID
    - FIREBASE_MEASUREMENT_ID
+5. The credentials are automatically loaded via `app.json` extra config and `Constants.expoConfig`
+6. To disable Firebase sync, simply remove the secrets - app will run in local-only mode
 
 **Operating Modes:**
 - **With Firebase credentials**: Global sync enabled across devices
