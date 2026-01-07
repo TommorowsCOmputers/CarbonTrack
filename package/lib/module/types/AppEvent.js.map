@@ -1,0 +1,1 @@
+{"version":3,"names":[],"sources":["AppEvent.ts"],"sourcesContent":["/**\n * An app event received from Google Ad Manager ads.\n */\nexport interface AppEvent {\n  /**\n   * The event name.\n   */\n  name: string;\n\n  /**\n   * The data received with the app event.\n   */\n  data?: string;\n}\n"],"mappings":"","ignoreList":[]}

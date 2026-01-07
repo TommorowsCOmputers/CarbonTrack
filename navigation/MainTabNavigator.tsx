@@ -15,10 +15,9 @@ import ActionsStackNavigator from "@/navigation/ActionsStackNavigator";
 import ProfileStackNavigator from "@/navigation/ProfileStackNavigator";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import DevicesScreen from "@/screens/DevicesScreen";
-import ChallengesScreen from "@/screens/ChallengesScreen";
+import ChallengesScreen from "@/screens/challengesscreen";
 import RetakeSurveyScreen from "@/screens/RetakeSurveyScreen";
 import { useTheme } from "@/hooks/useTheme";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { ThemedText } from "@/components/ThemedText";
 import { AdBanner } from "@/components/AdBanner";
 
@@ -185,7 +184,7 @@ export default function MainTabNavigator() {
       </Tab.Navigator>
 
       {showBanner && (
-        <SafeAreaView edges={["bottom"]} style={styles.bannerContainer}>
+        <View style={styles.bannerContainer}>
           <Animated.View
             style={[
               styles.banner,
@@ -204,7 +203,7 @@ export default function MainTabNavigator() {
               <Feather name="x" size={16} color="#E53935" />
             </TouchableOpacity>
           </Animated.View>
-        </SafeAreaView>
+        </View>
       )}
     </View>
   );

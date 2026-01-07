@@ -142,7 +142,7 @@ export default function ProfileScreen() {
               style={[styles.settingDescription, { color: theme.neutral }]}
             >
               This is a new Beta feature. Please report any issues to
-              301-937-5600.
+              customer_service@javenly.com, or 301-937-5600.
             </ThemedText>
           </View>
           <Switch

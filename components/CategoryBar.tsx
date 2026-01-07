@@ -1,13 +1,7 @@
 import React, { useEffect } from "react";
 import { View, StyleSheet, Image, ImageSourcePropType } from "react-native";
 import { Feather } from "@expo/vector-icons";
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withTiming,
-  withDelay,
-  Easing,
-} from "react-native-reanimated";
+// avoid static import of Reanimated; require dynamically when enabled
 import { ThemedText } from "@/components/ThemedText";
 import { Card } from "@/components/Card";
 import { Spacing } from "@/constants/theme";
@@ -30,22 +24,58 @@ export function CategoryBar({ icon, label, value, total, color, occupants, categ
   const { theme } = useTheme();
   const percentage = total > 0 ? (value / total) * 100 : 0;
   
-  const animatedWidth = useSharedValue(0);
-  
-  useEffect(() => {
-    animatedWidth.value = 0;
-    animatedWidth.value = withDelay(
-      animationDelay,
-      withTiming(percentage, {
-        duration: 1000,
-        easing: Easing.bezier(0.25, 0.1, 0.25, 1),
-      })
-    );
-  }, [percentage, animationDelay]);
-  
-  const animatedBarStyle = useAnimatedStyle(() => ({
-    width: `${animatedWidth.value}%`,
-  }));
+  // If reanimated is globally disabled, render the bar statically
+  // to avoid animated nodes trying to update unmounted views.
+  // eslint-disable-next-line no-undef
+  const disableReanimated = (global as any).__DISABLE_REANIMATED === true;
+
+  // Resolve an Animated implementation safely (prefer Reanimated when enabled).
+  let Animated: any;
+  if (disableReanimated) {
+    // fallback to React Native Animated when Reanimated is disabled
+    // eslint-disable-next-line global-require, @typescript-eslint/no-var-requires
+    Animated = require('react-native').Animated;
+  } else {
+    try {
+      // eslint-disable-next-line global-require, @typescript-eslint/no-var-requires
+      const Reanimated: any = require('react-native-reanimated');
+      Animated = Reanimated.Animated || Reanimated.default || require('react-native').Animated;
+    } catch (err) {
+      // final fallback
+      // eslint-disable-next-line global-require, @typescript-eslint/no-var-requires
+      Animated = require('react-native').Animated;
+    }
+  }
+
+  let animatedBarStyle: any = { width: `${percentage}%` };
+
+  if (!disableReanimated) {
+    try {
+      // eslint-disable-next-line global-require, @typescript-eslint/no-var-requires
+      const Reanimated: any = require('react-native-reanimated');
+      const { useSharedValue, useAnimatedStyle, withTiming, withDelay, Easing } = Reanimated;
+
+      animatedBarStyle = (() => {
+        const animatedWidth = useSharedValue(0);
+        useEffect(() => {
+          animatedWidth.value = 0;
+          animatedWidth.value = withDelay(
+            animationDelay,
+            withTiming(percentage, {
+              duration: 1000,
+              easing: Easing.bezier(0.25, 0.1, 0.25, 1),
+            })
+          );
+        }, [percentage, animationDelay]);
+
+        return useAnimatedStyle(() => ({
+          width: `${animatedWidth.value}%`,
+        }));
+      })();
+    } catch (err) {
+      animatedBarStyle = { width: `${percentage}%` };
+    }
+  }
   
   const perPersonEmissions = value / occupants;
   const categoryAverage = averageEmissionsPerPerson[categoryKey];

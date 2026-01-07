@@ -1,0 +1,1 @@
+{"version":3,"names":[],"sources":["declarations.d.ts"],"sourcesContent":["declare module 'react-native/Libraries/Utilities/binaryToBase64' {\n  export default function binaryToBase64(data: ArrayBuffer | Uint8Array): string;\n}\n"],"mappings":"","ignoreList":[]}

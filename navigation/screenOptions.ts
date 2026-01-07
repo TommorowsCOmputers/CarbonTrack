@@ -1,6 +1,5 @@
 import { Platform } from "react-native";
 import { NativeStackNavigationOptions } from "@react-navigation/native-stack";
-import { isLiquidGlassAvailable } from "expo-glass-effect";
 
 interface ScreenOptionsParams {
   theme: {
@@ -29,7 +28,8 @@ export const getCommonScreenOptions = ({
   },
   gestureEnabled: true,
   gestureDirection: "horizontal",
-  fullScreenGestureEnabled: isLiquidGlassAvailable() ? false : true,
+  // fallback: disable full screen gestures on iOS when blur is used
+  fullScreenGestureEnabled: Platform.OS === "ios" ? false : true,
   contentStyle: {
     backgroundColor: theme.backgroundRoot,
   },

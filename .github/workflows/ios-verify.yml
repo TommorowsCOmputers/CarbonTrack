@@ -1,0 +1,38 @@
+++ name: iOS Verify Build
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-ios:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install Ruby & CocoaPods
+        run: |
+          gem install cocoapods bundler
+
+      - name: Install dependencies
+        run: |
+          npm ci
+
+      - name: Expo prebuild
+        run: |
+          npx expo prebuild --platform ios
+
+      - name: Install Pods
+        working-directory: ios
+        run: |
+          pod install --repo-update
+
+      - name: Build for Simulator (no code signing)
+        working-directory: ios
+        run: |
+          xcodebuild -workspace CarbonTracker.xcworkspace -scheme CarbonTracker -configuration Release -sdk iphonesimulator -derivedDataPath build ONLY_ACTIVE_ARCH=NO

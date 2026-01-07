@@ -1,0 +1,121 @@
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.BaseAd = void 0;
+var _react = _interopRequireWildcard(require("react"));
+var _reactNative = require("react-native");
+var _common = require("../common");
+var _NativeError = require("../internal/NativeError");
+var _BannerAdSize = require("../BannerAdSize");
+var _validateAdRequestOptions = require("../validateAdRequestOptions");
+function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function (e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (const t in e) "default" !== t && {}.hasOwnProperty.call(e, t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, t)) && (i.get || i.set) ? o(f, t, i) : f[t] = e[t]); return f; })(e, t); }
+/* eslint-disable react/prop-types */
+/*
+ * Copyright (c) 2016-present Invertase Limited & Contributors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this library except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
+const sizeRegex = /([0-9]+)x([0-9]+)/;
+const BaseAd = exports.BaseAd = /*#__PURE__*/_react.default.forwardRef(({
+  unitId,
+  sizes,
+  requestOptions,
+  manualImpressionsEnabled,
+  ...props
+}, ref) => {
+  const [dimensions, setDimensions] = (0, _react.useState)([0, 0]);
+  (0, _react.useEffect)(() => {
+    if (!unitId) {
+      throw new Error("BannerAd: 'unitId' expected a valid string unit ID.");
+    }
+  }, [unitId]);
+  (0, _react.useEffect)(() => {
+    if (sizes.length === 0 || !sizes.every(size => size in _BannerAdSize.BannerAdSize || sizeRegex.test(size))) {
+      throw new Error("BannerAd: 'size(s)' expected a valid BannerAdSize or custom size string.");
+    }
+  }, [sizes]);
+  const parsedRequestOptions = JSON.stringify(requestOptions);
+  (0, _react.useEffect)(() => {
+    if (requestOptions) {
+      try {
+        (0, _validateAdRequestOptions.validateAdRequestOptions)(requestOptions);
+      } catch (e) {
+        if (e instanceof Error) {
+          throw new Error(`BannerAd: ${e.message}`);
+        }
+      }
+    }
+  }, [parsedRequestOptions]);
+  function onNativeEvent({
+    nativeEvent
+  }) {
+    const {
+      type
+    } = nativeEvent;
+    if (type !== 'onSizeChange' && (0, _common.isFunction)(props[type])) {
+      let eventHandler, eventPayload;
+      switch (type) {
+        case 'onAdLoaded':
+          eventPayload = {
+            width: nativeEvent.width,
+            height: nativeEvent.height
+          };
+          if (eventHandler = props[type]) eventHandler(eventPayload);
+          break;
+        case 'onAdFailedToLoad':
+          eventPayload = _NativeError.NativeError.fromEvent(nativeEvent, 'googleMobileAds');
+          if (eventHandler = props[type]) eventHandler(eventPayload);
+          break;
+        case 'onAppEvent':
+          eventPayload = {
+            name: nativeEvent.name,
+            data: nativeEvent.data
+          };
+          if (eventHandler = props[type]) eventHandler(eventPayload);
+          break;
+        default:
+          if (eventHandler = props[type]) eventHandler();
+      }
+    }
+    if (type === 'onAdLoaded' || type === 'onSizeChange') {
+      const {
+        width,
+        height
+      } = nativeEvent;
+      if (width && height) setDimensions([width, height]);
+    }
+  }
+  const style = sizes.includes(_BannerAdSize.BannerAdSize.FLUID) ? {
+    width: '100%',
+    height: dimensions[1]
+  } : {
+    width: dimensions[0],
+    height: dimensions[1]
+  };
+  return /*#__PURE__*/_react.default.createElement(GoogleMobileAdsBannerView, {
+    ref: ref,
+    sizes: sizes,
+    style: style,
+    unitId: unitId,
+    request: (0, _validateAdRequestOptions.validateAdRequestOptions)(requestOptions),
+    manualImpressionsEnabled: !!manualImpressionsEnabled,
+    onNativeEvent: onNativeEvent
+  });
+});
+BaseAd.displayName = 'BaseAd';
+const GoogleMobileAdsBannerView = (0, _reactNative.requireNativeComponent)('RNGoogleMobileAdsBannerView');
+//# sourceMappingURL=BaseAd.js.map

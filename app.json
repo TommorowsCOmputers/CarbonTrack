@@ -7,10 +7,17 @@
     "icon": "./assets/images/icon.png",
     "scheme": "carbontracker",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/f3de452c-3b95-47be-89e3-18328d045caf"
+    },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.javenly.carbontracker.app"
+      "bundleIdentifier": "com.javenly.carbontracker.app",
+      "infoPlist": {},
+      "googleMobileAdsAppId": "ca-app-pub-6040063651962532~5883851251"
     },
     "android": {
       "package": "com.javenly.carbontracker.app",
@@ -21,7 +28,8 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "googleMobileAdsAppId": "ca-app-pub-6040063651962532~7604127030"
     },
     "web": {
       "output": "single",
@@ -29,53 +37,64 @@
     },
     "plugins": [
       [
-        "expo-splash-screen",
+        "expo-build-properties",
         {
-          "image": "./assets/images/splash-icon.png",
-          "imageWidth": 200,
-          "resizeMode": "contain",
-          "backgroundColor": "#ffffff",
-          "dark": {
-            "backgroundColor": "#000000"
+          "android": {
+            "agpVersion": "8.2.2",
+            "gradleVersion": "8.2",
+            "kotlinVersion": "1.9.23",
+            "compileSdkVersion": 34,
+            "targetSdkVersion": 34,
+            "javaVersion": "17"
           }
         }
       ],
-      "expo-web-browser",
       [
-        "react-native-google-mobile-ads",
+        "./plugins/withAndroidKeystore",
         {
-          "androidAppId": "ca-app-pub-6040063651962532~7604127030",
-          "iosAppId": "ca-app-pub-6040063651962532~5883851251"
+          "keystorePath": "~/CarbonTrack/carbontrack-release-key.jks",
+          "storePassword": "Babu123!",
+          "keyAlias": "carbontrack-key",
+          "keyPassword": "Babu123!"
+        }
+      ],
+      [
+        "./plugins/with-admob-banner",
+        {
+          "appId": "ca-app-pub-6040063651962532~7604127030",
+          "unitIds": {
+            "android": "ca-app-pub-6040063651962532/9512105076",
+            "android_bottom_home": "ca-app-pub-6040063651962532/4044155973",
+            "android_extra_1": "ca-app-pub-6040063651962532/1450987501",
+            "android_extra_2": "ca-app-pub-6040063651962532/2808409006",
+            "ios": "ca-app-pub-6040063651962532/5852061667"
+          }
+        }
+      ],
+      [
+        "./plugins/with-stallion",
+        {
+          "projectId": "6957f561008933b603aac4d2",
+          "appToken": "REPLACE_WITH_APP_TOKEN"
         }
       ]
+      ,
+      [
+        "./plugins/with-android-device-filter"
+      ]
+      ,
+      "./plugins/with-fix-signing-config"
+      
     ],
-    "react-native-google-mobile-ads": {
-      "android_app_id": "ca-app-pub-6040063651962532~7604127030",
-      "ios_app_id": "ca-app-pub-6040063651962532~5883851251"
-    },
     "experiments": {
-      "reactCompiler": true
+      "reactNativeNewArchitecture": false,
+      "reactCompiler": false
     },
     "extra": {
-      "FIREBASE_API_KEY": "",
-      "FIREBASE_AUTH_DOMAIN": "",
-      "FIREBASE_PROJECT_ID": "",
-      "FIREBASE_STORAGE_BUCKET": "",
-      "FIREBASE_MESSAGING_SENDER_ID": "",
-      "FIREBASE_APP_ID": "",
-      "FIREBASE_MEASUREMENT_ID": "",
-      "ADMOB_BANNER_IOS": "ca-app-pub-6040063651962532/5852061667",
-      "ADMOB_BANNER_ANDROID": "ca-app-pub-6040063651962532/9512105076",
-      "ADMOB_BANNER_ANDROID_BOTTOM_HOME": "ca-app-pub-6040063651962532/4044155973",
-      "ADMOB_BANNER_IOS_BOTTOM_HOME": "ca-app-pub-6040063651962532/1999736129",
-      "ADMOB_BANNER_ANDROID_EXTRA_1": "ca-app-pub-6040063651962532/1450987501",
-      "ADMOB_BANNER_ANDROID_EXTRA_2": "ca-app-pub-6040063651962532/2808409006",
-      "ADMOB_BANNER_IOS_EXTRA_1": "ca-app-pub-6040063651962532/4886125049",
-      "ADMOB_BANNER_IOS_EXTRA_2": "ca-app-pub-6040063651962532/3573043370",
       "eas": {
-        "projectId": "b25a1691-a0fd-463d-9820-f3af32313dec"
+        "projectId": "f3de452c-3b95-47be-89e3-18328d045caf"
       }
     },
-    "owner": "Javenly Innovations LLC"
+    "owner": "javenly-innovations-llc"
   }
 }

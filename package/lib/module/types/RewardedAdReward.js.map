@@ -1,0 +1,1 @@
+{"version":3,"names":[],"sources":["RewardedAdReward.ts"],"sourcesContent":["/**\n * A `RewardedAdReward` returned from rewarded ads.\n */\nexport interface RewardedAdReward {\n  /**\n   * The reward name, e.g. 'coins', 'diamonds'.\n   */\n  type: string;\n\n  /**\n   * The number value of the reward, e.g. 10\n   */\n  amount: number;\n}\n"],"mappings":"","ignoreList":[]}
