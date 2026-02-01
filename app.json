@@ -77,14 +77,11 @@
           "projectId": "6957f561008933b603aac4d2",
           "appToken": "REPLACE_WITH_APP_TOKEN"
         }
-      ]
-      ,
+      ],
       [
         "./plugins/with-android-device-filter"
-      ]
-      ,
+      ],
       "./plugins/with-fix-signing-config"
-      
     ],
     "experiments": {
       "reactNativeNewArchitecture": false,
